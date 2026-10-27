@@ -69,6 +69,7 @@ describe("LoginViewModel", () => {
         vm.editLocalpart("research-agent");
         await vm.enroll("research-agent", "synthetic-permit");
         expect(vm.state.value.failed).toBe(true);
+        expect(vm.state.value.localpart).toBe("research-agent");
         vm.selectIntent("connect");
         expect(vm.state.value).toEqual({ intent: "connect", localpart: "", busy: false, failed: false });
         vm.dispose();

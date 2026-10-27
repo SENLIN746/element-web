@@ -43,6 +43,7 @@ export function LoginForm({ api, vm, server }: { api: Api; vm: LoginViewModel; s
                                 spellCheck={false}
                                 disabled={state.busy}
                                 placeholder="research-agent"
+                                value={state.localpart}
                                 onChange={(event) => vm.editLocalpart(event.currentTarget.value)}
                                 aria-describedby="agentim-address-preview"
                             />
