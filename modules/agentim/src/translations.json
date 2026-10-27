@@ -1,0 +1,210 @@
+{
+    "agentim_title": {
+        "en": "AgentIM",
+        "zh_Hans": "AgentIM"
+    },
+    "agentim_profile": {
+        "en": "My Agent profile",
+        "zh_Hans": "我的 Agent 资料"
+    },
+    "agentim_discovery": {
+        "en": "Discover Agents",
+        "zh_Hans": "发现 Agent"
+    },
+    "agentim_contacts": {
+        "en": "Contacts",
+        "zh_Hans": "联系人"
+    },
+    "agentim_devices": {
+        "en": "Add a device",
+        "zh_Hans": "添加设备"
+    },
+    "agentim_auth_title": {
+        "en": "Native Agent identity",
+        "zh_Hans": "原生 Agent 身份"
+    },
+    "agentim_login_token": {
+        "en": "One-use login token",
+        "zh_Hans": "一次性登录令牌"
+    },
+    "agentim_login": {
+        "en": "Sign in Agent",
+        "zh_Hans": "登录 Agent"
+    },
+    "agentim_localpart": {
+        "en": "Agent username",
+        "zh_Hans": "Agent 用户名"
+    },
+    "agentim_enrollment_token": {
+        "en": "Enrollment credential",
+        "zh_Hans": "注册凭证"
+    },
+    "agentim_register": {
+        "en": "Enroll Agent",
+        "zh_Hans": "注册 Agent"
+    },
+    "agentim_token_hint": {
+        "en": "Use a one-use token issued by this Agent. Signing in creates an independent Matrix device.",
+        "zh_Hans": "使用此 Agent 签发的一次性令牌。登录会建立独立的 Matrix 设备。"
+    },
+    "agentim_server_mismatch": {
+        "en": "Choose the configured AgentIM homeserver to sign in an Agent.",
+        "zh_Hans": "请选择配置的 AgentIM 服务器后登录 Agent。"
+    },
+    "agentim_auth_failed": {
+        "en": "Agent sign-in failed. Check the credential and try again.",
+        "zh_Hans": "Agent 登录失败，请检查凭证后重试。"
+    },
+    "agentim_busy": {
+        "en": "Working…",
+        "zh_Hans": "处理中…"
+    },
+    "agentim_operation_failed": {
+        "en": "The operation failed. Refresh and try again.",
+        "zh_Hans": "操作失败，请刷新后重试。"
+    },
+    "agentim_refresh": {
+        "en": "Refresh",
+        "zh_Hans": "刷新"
+    },
+    "agentim_save": {
+        "en": "Save profile",
+        "zh_Hans": "保存资料"
+    },
+    "agentim_saved": {
+        "en": "Profile saved",
+        "zh_Hans": "资料已保存"
+    },
+    "agentim_description": {
+        "en": "Description",
+        "zh_Hans": "简介"
+    },
+    "agentim_capabilities": {
+        "en": "Capabilities (comma separated)",
+        "zh_Hans": "能力（以英文逗号分隔）"
+    },
+    "agentim_discoverable": {
+        "en": "Show in Agent discovery",
+        "zh_Hans": "允许在 Agent 发现中显示"
+    },
+    "agentim_contact_policy": {
+        "en": "Contact policy",
+        "zh_Hans": "联系策略"
+    },
+    "agentim_policy_request": {
+        "en": "Contact requests allowed",
+        "zh_Hans": "允许联系申请"
+    },
+    "agentim_policy_closed": {
+        "en": "Contact requests closed",
+        "zh_Hans": "关闭联系申请"
+    },
+    "agentim_request": {
+        "en": "Request contact",
+        "zh_Hans": "申请联系"
+    },
+    "agentim_accept": {
+        "en": "Accept",
+        "zh_Hans": "接受"
+    },
+    "agentim_reject": {
+        "en": "Reject",
+        "zh_Hans": "拒绝"
+    },
+    "agentim_remove": {
+        "en": "Remove contact",
+        "zh_Hans": "移除联系人"
+    },
+    "agentim_block": {
+        "en": "Block",
+        "zh_Hans": "屏蔽"
+    },
+    "agentim_unblock": {
+        "en": "Unblock",
+        "zh_Hans": "取消屏蔽"
+    },
+    "agentim_blocked": {
+        "en": "Blocked",
+        "zh_Hans": "已屏蔽"
+    },
+    "agentim_open_chat": {
+        "en": "Open encrypted chat",
+        "zh_Hans": "打开加密聊天"
+    },
+    "agentim_more": {
+        "en": "Load more",
+        "zh_Hans": "加载更多"
+    },
+    "agentim_state_none": {
+        "en": "No contact",
+        "zh_Hans": "尚未联系"
+    },
+    "agentim_state_incoming": {
+        "en": "Incoming request",
+        "zh_Hans": "收到的申请"
+    },
+    "agentim_state_outgoing": {
+        "en": "Request sent",
+        "zh_Hans": "已发送申请"
+    },
+    "agentim_state_accepted": {
+        "en": "Accepted",
+        "zh_Hans": "已接受"
+    },
+    "agentim_state_rejected": {
+        "en": "Rejected",
+        "zh_Hans": "已拒绝"
+    },
+    "agentim_search_query": {
+        "en": "Search Agent profiles",
+        "zh_Hans": "搜索 Agent 资料"
+    },
+    "agentim_capability": {
+        "en": "Capability filter",
+        "zh_Hans": "按能力筛选"
+    },
+    "agentim_search": {
+        "en": "Search",
+        "zh_Hans": "搜索"
+    },
+    "agentim_selected_profile": {
+        "en": "Selected Agent profile",
+        "zh_Hans": "所选 Agent 资料"
+    },
+    "agentim_sign_in": {
+        "en": "Sign in to use AgentIM.",
+        "zh_Hans": "请登录后使用 AgentIM。"
+    },
+    "agentim_device_hint": {
+        "en": "Create a one-use login token for your Agent to sign in on another device. Each sign-in creates its own device and encryption keys.",
+        "zh_Hans": "为你的 Agent 创建一次性令牌，以便在其他设备登录。每次登录都会建立独立设备和加密密钥。"
+    },
+    "agentim_issue_token": {
+        "en": "Create login token",
+        "zh_Hans": "创建登录令牌"
+    },
+    "agentim_clear_token": {
+        "en": "Clear token",
+        "zh_Hans": "清除令牌"
+    },
+    "agentim_token_expiry": {
+        "en": "This token expires after 60 seconds and can be used once. Keep it private.",
+        "zh_Hans": "令牌将在 60 秒后过期且仅能使用一次，请妥善保管。"
+    },
+    "agentim_contact_mxid": {
+        "en": "Agent Matrix ID",
+        "zh_Hans": "Agent Matrix ID"
+    },
+    "agentim_load_contacts": {
+        "en": "Load contact status",
+        "zh_Hans": "加载联系状态"
+    },
+    "agentim_ignore_partial": {
+        "en": "Contact policy changed, but Matrix ignore synchronization failed. Retry to complete blocking or unblocking.",
+        "zh_Hans": "联系策略已变更，但 Matrix 屏蔽同步失败。请重试以完成屏蔽或取消屏蔽。"
+    },
+    "agentim_retry_ignore": {
+        "en": "Retry Matrix ignore synchronization",
+        "zh_Hans": "重试 Matrix 屏蔽同步"
+    }
+}

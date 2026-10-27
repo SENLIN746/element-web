@@ -1,6 +1,7 @@
 /*
 Copyright 2024 New Vector Ltd.
 Copyright 2020 The Matrix.org Foundation C.I.C.
+Copyright 2026 alljoy
 
 SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE files in the repository root for full details.
@@ -18,11 +19,8 @@ const LEGACY_PROTOCOL = "element";
 const SEARCH_PARAM = "element-desktop-ssoid";
 const STORE_FILE_NAME = "sso-sessions.json";
 
-// we getPath userData before electron-main changes it, so this is the default value
-const storePath = path.join(app.getPath("userData"), STORE_FILE_NAME);
-
 export default class ProtocolHandler {
-    private readonly store: Record<string, string> = {};
+    private store: Record<string, string> = {};
     private readonly sessionId: string;
 
     public constructor(private readonly protocol: string) {
@@ -42,7 +40,6 @@ export default class ProtocolHandler {
             });
         }
 
-        this.store = this.readStore();
         this.sessionId = randomUUID();
 
         ipcMain.handle("getProtocol", this.onGetProtocol);
@@ -54,14 +51,18 @@ export default class ProtocolHandler {
 
     private setAsDefaultProtocolClient(parsedArgs: Args): void {
         const args = getArgsForProtocolRegistration(parsedArgs);
-        if (app.isPackaged) {
-            app.setAsDefaultProtocolClient(this.protocol, process.execPath, args);
-            app.setAsDefaultProtocolClient(LEGACY_PROTOCOL, process.execPath, args);
-        } else if (process.platform === "win32") {
-            // on Mac/Linux this would just cause the electron binary to open
-            // special handler for running without being packaged, e.g `electron .` by passing our app path to electron
-            app.setAsDefaultProtocolClient(this.protocol, process.execPath, [app.getAppPath(), ...args]);
-            app.setAsDefaultProtocolClient(LEGACY_PROTOCOL, process.execPath, [app.getAppPath(), ...args]);
+        const protocols = [this.protocol];
+        // The compatibility scheme belongs to upstream Element, not independently branded applications.
+        if (this.protocol === "io.element.desktop" || this.protocol === "io.element.nightly") {
+            protocols.push(LEGACY_PROTOCOL);
+        }
+        for (const protocol of protocols) {
+            if (app.isPackaged) {
+                app.setAsDefaultProtocolClient(protocol, process.execPath, args);
+            } else if (process.platform === "win32") {
+                // On Mac/Linux this would open the Electron binary rather than this application.
+                app.setAsDefaultProtocolClient(protocol, process.execPath, [app.getAppPath(), ...args]);
+            }
         }
     }
 
@@ -99,8 +100,9 @@ export default class ProtocolHandler {
         return true;
     }
 
-    private readStore(): Record<string, string> {
+    private readStore(userDataPath = app.getPath("userData")): Record<string, string> {
         try {
+            const storePath = path.join(userDataPath, STORE_FILE_NAME);
             const s = fs.readFileSync(storePath, { encoding: "utf8" });
             const o = JSON.parse(s);
             return typeof o === "object" ? o : {};
@@ -110,8 +112,11 @@ export default class ProtocolHandler {
         }
     }
 
-    private writeStore(): void {
-        fs.writeFileSync(storePath, JSON.stringify(this.store));
+    private writeStore(userDataPath: string): void {
+        fs.mkdirSync(userDataPath, { recursive: true, mode: 0o700 });
+        const storePath = path.join(userDataPath, STORE_FILE_NAME);
+        fs.writeFileSync(storePath, JSON.stringify(this.store), { mode: 0o600 });
+        fs.chmodSync(storePath, 0o600);
     }
 
     /**
@@ -122,7 +127,11 @@ export default class ProtocolHandler {
      * @returns whether a deeplink was present in args and navigated to.
      */
     public initialise(args: Args): boolean {
-        this.setAsDefaultProtocolClient(args);
+        if (args.protocolRegistration !== false) {
+            this.setAsDefaultProtocolClient(args);
+        }
+        // Main applies the final profile after constructing this handler. Read and write only that profile.
+        this.store = this.readStore(args.userDataPath);
 
         const url = args.positional.find(this.checkArgIsUrl);
         const hasDeeplink = url ? this.handleDeeplink(url) : false;
@@ -135,7 +144,7 @@ export default class ProtocolHandler {
             }
         }
         this.store[this.sessionId] = args.userDataPath;
-        this.writeStore();
+        this.writeStore(args.userDataPath);
 
         return hasDeeplink;
     }

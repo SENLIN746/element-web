@@ -5,6 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE files in the repository root for full details.
 */
 
+import type { AgentIMApi } from "./agentim";
 import type { Room } from "../models/Room";
 import { type Watchable } from "./watchable";
 
@@ -32,6 +33,9 @@ export interface AccountDataApi {
  * @public
  */
 export interface ClientApi {
+    /** AgentIM extension calls authenticated by the current native Matrix identity. */
+    readonly agentim: AgentIMApi;
+
     /**
      * Allows modules to modify aspects of the way the matrix-js-sdk client is created and configured.
      * @alpha Subject to change.

@@ -1,5 +1,6 @@
 /*
 Copyright 2026 Element Creations Ltd.
+Copyright 2026 alljoy
 
 SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE files in the repository root for full details.
@@ -27,6 +28,10 @@ export function getArgsForProtocolRegistration(parsedArgs: Args): string[] {
 
     if (!parsedArgs.update) {
         args.push("--no-update");
+    }
+
+    if (parsedArgs.protocolRegistration === false) {
+        args.push("--no-protocol-registration");
     }
 
     if (parsedArgs.localConfigPath) {
@@ -64,6 +69,8 @@ export interface Args {
      * Whether to start the auto-updater.
      */
     update: boolean;
+    /** Whether launching this instance may register operating-system URL handlers. */
+    protocolRegistration?: boolean;
     /**
      * Whether to start the app hidden.
      */
@@ -84,14 +91,15 @@ function isRealUserDataDir(d: string): boolean {
 }
 
 function getUserDataPath(argv: ParsedArgs, protocolHandler: ProtocolHandler): string {
+    // An explicitly isolated profile must not be redirected through a default profile's SSO index.
+    if (argv["profile-dir"]) {
+        return argv["profile-dir"];
+    }
+
     // check if we are passed a profile in the SSO callback url
     const userDataPathInProtocol = protocolHandler.getProfileFromDeeplink(argv["_"]);
     if (userDataPathInProtocol) {
         return userDataPathInProtocol;
-    }
-
-    if (argv["profile-dir"]) {
-        return argv["profile-dir"];
     }
 
     let newUserDataPath = process.env.ELEMENT_PROFILE_DIR ?? defaultUserDataDir;
@@ -141,6 +149,7 @@ export function getArgs(protocolHandler: ProtocolHandler): Args {
                 `                         Otherwise use the default user location '${defaultUserDataDir}'`,
         );
         console.log("  --no-update:          Disable automatic updating.");
+        console.log("  --no-protocol-registration: Do not register operating-system URL handlers.");
         console.log("  --hidden:             Start the application hidden in the system tray.");
         console.log("  --help:               Displays this help message.");
         console.log("And more such as --proxy, see: https://electronjs.org/docs/api/command-line-switches");
@@ -159,6 +168,7 @@ export function getArgs(protocolHandler: ProtocolHandler): Args {
         devtools: argv["devtools"] || false,
         // Minimist parses `--no-`-prefixed arguments as booleans with value `false` rather than verbatim.
         update: argv["update"] ?? true,
+        protocolRegistration: argv["protocol-registration"],
         hidden: argv["hidden"] || false,
         positional: argv["_"],
     };

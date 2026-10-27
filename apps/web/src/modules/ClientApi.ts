@@ -8,9 +8,11 @@ import type { ClientApi as IClientApi, Room } from "@element-hq/element-web-modu
 import { Room as ModuleRoom } from "./models/Room";
 import { AccountDataApi } from "./AccountDataApi";
 import { MatrixClientPeg } from "../MatrixClientPeg";
+import { AgentIMApi } from "./agentim/AgentIMApi";
 import { ClientCreationManagementApi } from "./ClientCreationManagementApi.ts";
 
 export class ClientApi implements IClientApi {
+    public readonly agentim = new AgentIMApi();
     public readonly accountData = new AccountDataApi();
     public readonly creationManagement = new ClientCreationManagementApi();
 

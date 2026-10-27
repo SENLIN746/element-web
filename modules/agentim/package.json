@@ -1,0 +1,30 @@
+{
+    "name": "@agentim/element-module",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "main": "lib/index.js",
+    "license": "SEE LICENSE IN README.md",
+    "scripts": {
+        "build": "nx build",
+        "lint:types": "nx lint:types",
+        "test:unit": "vitest run",
+        "i18n": "node scripts/check-translations.ts"
+    },
+    "dependencies": {
+        "@element-hq/element-web-module-api": "workspace:*",
+        "@vector-im/compound-web": "catalog:"
+    },
+    "devDependencies": {
+        "@types/node": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "@vitejs/plugin-react": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:",
+        "vitest": "catalog:",
+        "happy-dom": "^20.10.2"
+    }
+}

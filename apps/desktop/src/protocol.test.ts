@@ -1,5 +1,6 @@
 /*
 Copyright 2026 Element Creations Ltd.
+Copyright 2026 alljoy
 
 SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE files in the repository root for full details.
@@ -41,6 +42,7 @@ beforeEach(() => {
     vol.reset();
     // Clear the event emitter
     app.removeAllListeners();
+    vi.clearAllMocks();
 });
 
 describe("ProtocolHandler", () => {
@@ -138,19 +140,39 @@ describe("ProtocolHandler", () => {
             vi.spyOn(process, "execPath", "get").mockReturnValue("/bin/element-desktop");
         });
 
-        it("should set as default protocol client", () => {
-            const handler = new ProtocolHandler(TEST_PROTOCOL);
+        it.each(["io.element.desktop", "io.element.nightly"])(
+            "should retain Element registration for %s",
+            (protocol) => {
+                const handler = new ProtocolHandler(protocol);
+                handler.initialise({
+                    userDataPath: USER_DATA_DIR,
+                    devtools: false,
+                    update: false,
+                    hidden: false,
+                    positional: ["/bin/element-desktop"],
+                });
+
+                const args = ["--no-update"];
+                expect(app.setAsDefaultProtocolClient).toHaveBeenCalledWith(protocol, "/bin/element-desktop", args);
+                expect(app.setAsDefaultProtocolClient).toHaveBeenCalledWith("element", "/bin/element-desktop", args);
+            },
+        );
+
+        it("should register only the independent AgentIM scheme during a normal launch", () => {
+            const handler = new ProtocolHandler("agentim");
             handler.initialise({
-                userDataPath: USER_DATA_DIR,
+                userDataPath: "/private/agentim-profile",
                 devtools: false,
                 update: false,
                 hidden: false,
                 positional: ["/bin/element-desktop"],
             });
 
-            const args = ["--no-update"];
-            expect(app.setAsDefaultProtocolClient).toHaveBeenCalledWith(TEST_PROTOCOL, "/bin/element-desktop", args);
-            expect(app.setAsDefaultProtocolClient).toHaveBeenCalledWith("element", "/bin/element-desktop", args);
+            expect(app.setAsDefaultProtocolClient).toHaveBeenCalledExactlyOnceWith("agentim", "/bin/element-desktop", [
+                "--no-update",
+                "--profile-dir",
+                "/private/agentim-profile",
+            ]);
         });
 
         it("should handle deeplink", () => {
@@ -168,6 +190,45 @@ describe("ProtocolHandler", () => {
             });
 
             expect(global.mainWindow!.loadURL).toHaveBeenCalledWith("vector://vector/webapp/#/room/#matrix:matrix.org");
+        });
+
+        it("should not register OS handlers when explicitly disabled", () => {
+            const handler = new ProtocolHandler(TEST_PROTOCOL);
+            expect(app.getPath).not.toHaveBeenCalled();
+            handler.initialise({
+                userDataPath: "/private/agentim-profile",
+                devtools: false,
+                update: false,
+                protocolRegistration: false,
+                hidden: false,
+                positional: ["/bin/element-desktop"],
+            });
+
+            expect(app.setAsDefaultProtocolClient).not.toHaveBeenCalled();
+            expect(app.getPath).not.toHaveBeenCalled();
+        });
+
+        it("should keep SSO session writes in the final profile without importing default sessions", () => {
+            const defaultStorePath = USER_DATA_DIR + "/sso-sessions.json";
+            const original = memfs.readFileSync(defaultStorePath, "utf8");
+            const privateDir = "/private/agentim-profile";
+            vol.fromJSON({ "./sso-sessions.json": JSON.stringify({ privateSession: privateDir }) }, privateDir);
+            const handler = new ProtocolHandler(TEST_PROTOCOL);
+            handler.initialise({
+                userDataPath: privateDir,
+                devtools: false,
+                update: false,
+                protocolRegistration: false,
+                hidden: false,
+                positional: ["/bin/element-desktop"],
+            });
+
+            expect(memfs.readFileSync(defaultStorePath, "utf8")).toBe(original);
+            const isolated = JSON.parse(memfs.readFileSync(privateDir + "/sso-sessions.json", "utf8") as string);
+            expect(Object.values(isolated)).toEqual([privateDir]);
+            expect(isolated).not.toHaveProperty(TEST_SESSION_ID);
+            expect(isolated).not.toHaveProperty("privateSession");
+            expect(memfs.statSync(privateDir + "/sso-sessions.json").mode & 0o777).toBe(0o600);
         });
     });
 });

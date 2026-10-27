@@ -1,5 +1,6 @@
 /*
 Copyright 2026 Element Creations Ltd.
+Copyright 2026 alljoy
 
 SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE files in the repository root for full details.
@@ -87,6 +88,19 @@ describe("getArgsForProtocolRegistration", () => {
             }),
         ).toStrictEqual([]);
     });
+
+    it("should preserve a disabled protocol-registration option", () => {
+        expect(
+            getArgsForProtocolRegistration({
+                userDataPath: "/Users/name/Library/Application Support/Element",
+                devtools: false,
+                update: true,
+                protocolRegistration: false,
+                hidden: false,
+                positional: [],
+            }),
+        ).toStrictEqual(["--no-protocol-registration"]);
+    });
 });
 
 describe("getArgs", () => {
@@ -142,6 +156,11 @@ describe("getArgs", () => {
             hidden: false,
             positional: ["/path/to/app"],
         });
+    });
+
+    it("should disable OS protocol registration only when requested", () => {
+        expect(run().protocolRegistration).toBeUndefined();
+        expect(run("--no-protocol-registration").protocolRegistration).toBe(false);
     });
 
     describe("storageMode", () => {
@@ -200,6 +219,21 @@ describe("getArgs", () => {
                 hidden: false,
                 positional: ["/path/to/app"],
             });
+        });
+
+        it("should keep an explicit profile isolated from a stale SSO deeplink", () => {
+            vi.spyOn(process, "argv", "get").mockReturnValue([
+                "/path/to/app",
+                "--profile-dir",
+                "/private/agentim-profile",
+                "protocol:/#state=foo&code=bar",
+            ]);
+            const mockProtocolHandler = {
+                getProfileFromDeeplink: vi.fn().mockReturnValue("/foreign/profile"),
+            } as unknown as ProtocolHandler;
+
+            expect(getArgs(mockProtocolHandler).userDataPath).toBe("/private/agentim-profile");
+            expect(mockProtocolHandler.getProfileFromDeeplink).not.toHaveBeenCalled();
         });
 
         it("should handle '--profile'", () => {

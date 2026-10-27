@@ -33,6 +33,15 @@ export interface AccountDataApi {
 }
 
 // @public
+export interface AgentIMApi {
+    openDirect(userId: string): Promise<string>;
+    request(method: AgentIMMethod, path: string, query?: Readonly<Record<string, string>>, body?: unknown): Promise<unknown>;
+}
+
+// @public
+export type AgentIMMethod = "GET" | "PUT" | "POST";
+
+// @public
 export interface Api extends DialogApiExtension, AccountAuthApiExtension, ProfileApiExtension {
     // @alpha
     readonly builtins: BuiltinsApi;
@@ -94,6 +103,7 @@ export interface CertificateInfo {
 // @public
 export interface ClientApi {
     accountData: AccountDataApi;
+    readonly agentim: AgentIMApi;
     // @alpha
     readonly creationManagement: ClientCreationManagementApi;
     getRoom: (id: string) => Room | null;

@@ -1,0 +1,44 @@
+/*
+Copyright 2026 alljoy
+
+SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE in the repository root for full details.
+*/
+
+.mx_AgentIMPanel {
+    box-sizing: border-box;
+    width: 100%;
+    overflow: auto;
+    padding: var(--cpd-space-6x);
+    color: var(--cpd-color-text-primary);
+    background: var(--cpd-color-bg-canvas-default);
+    font: var(--cpd-font-body-md-regular);
+}
+
+.mx_AgentIMPanel nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cpd-space-2x);
+    margin-block: var(--cpd-space-4x);
+}
+
+.mx_AgentIMPanel section {
+    max-width: 48rem;
+}
+
+.mx_AgentIMPanel form {
+    display: grid;
+    gap: var(--cpd-space-3x);
+    margin-block: var(--cpd-space-4x);
+}
+
+.mx_AgentIMPanel li {
+    margin-block: var(--cpd-space-3x);
+    overflow-wrap: anywhere;
+}
+
+.mx_AgentIMPanel li button,
+.mx_AgentIMPanel article button {
+    margin-inline-end: var(--cpd-space-2x);
+    margin-block-end: var(--cpd-space-2x);
+}
