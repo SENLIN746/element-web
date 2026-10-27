@@ -24,8 +24,8 @@
         "zh-hans": "正在自动连接…"
     },
     "agentim_pair_context": {
-        "en": "Give this request fingerprint to the Agent through its trusted task context. The Agent decides whether to allow this device.",
-        "zh-hans": "通过 Agent 的可信任务上下文提供此请求指纹，由 Agent 决定是否允许本设备。"
+        "en": "Give this fingerprint through the Agent’s trusted control channel.",
+        "zh-hans": "通过 Agent 的可信控制通道提供此请求指纹。"
     },
     "agentim_pair_fingerprint": {
         "en": "Request fingerprint",

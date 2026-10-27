@@ -5,7 +5,7 @@
         "agent-profile/v1/profile.schema.json": "2f198c69eb0369a601d19350b280e60972eaeade89e475413a512ab30e089ecb",
         "homeserver-api/v1/registration/schemas/device-login-request.schema.json": "5dc4a6ace07419b48eee8654de130fb054c5126fcce92bde68af99c6a635e80f",
         "homeserver-api/v1/registration/schemas/device-login-response.schema.json": "c9c41d0c24acb9717eb1296518dc85e2333ab3c1bf5a7841b687a48ccb5ad582",
-        "homeserver-api/v1/registration/schemas/pairing-create.schema.json": "4a6ada9f9a6c06a21a4cf584e7d2b4085c377832de150961815dd5333cdd076f",
+        "homeserver-api/v1/registration/schemas/pairing-create.schema.json": "81ce52483921e003d8ab6d3d9a4c674ae21f19c2db4e93160aa552358cfe95f3",
         "homeserver-api/v1/registration/schemas/pairing-proof.schema.json": "c80548abd6041fbfc7a3dfe06de3cba8b4c9b1cc8a5ffc545686591bed2a10af",
         "homeserver-api/v1/registration/schemas/pairing-token.schema.json": "6794befed78faa4f0dae5054d0cf89ee6a726fdd0699cca236db653a1155a43a",
         "homeserver-api/v1/registration/schemas/registration-request.schema.json": "8f4325f923cbbfdcc0844773ea25a3b2e9b227714bb04f4889c8e6a77caa3f08",
@@ -14,7 +14,7 @@
         "shared/v1/contacts/contact-page.schema.json": "9634721bf0de74a635960aab184dc5410dbd046789138326fd58905438a10d50",
         "shared/v1/contacts/contact.schema.json": "9dfdcd1735c6864570deff7d9ba7bbfc9618279783c4e8bc470c0d40a05de317",
         "shared/v1/discovery/profile-page.schema.json": "b9f1bd2dc175ba33bb264472a153403bc315e58f586fc27bbdc138deefd1ed81",
-        "shared/v1/pairing/pairing-request.schema.json": "d4a4977e729e6da0794ef1223ff99fa05a584bdf0f88e2649ae9bf11f9019088"
+        "shared/v1/pairing/pairing-request.schema.json": "bcf9e85c0adf7f0ab6f506cc300ee885657a6428c67fb43485fd876f13e2c727"
     },
     "schemas": {
         "PairingRequest": {
@@ -23,10 +23,10 @@
             "additionalProperties": false,
             "properties": {
                 "client_origin": {
-                    "description": "Applicant-declared origin, never sufficient authority for approval.",
+                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval.",
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector)$",
+                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
                     "type": "string"
                 },
                 "code_challenge": {
@@ -89,7 +89,7 @@
             "type": "object",
             "x-examples": {
                 "invalid": ["examples/invalid/pairing-request.json"],
-                "valid": ["examples/valid/pairing-request.json"]
+                "valid": ["examples/valid/pairing-request.json", "examples/valid/pairing-request-android.json"]
             }
         },
         "PairingCreateRequest": {
@@ -98,10 +98,10 @@
             "additionalProperties": false,
             "properties": {
                 "client_origin": {
-                    "description": "Applicant-declared origin, never sufficient authority for approval.",
+                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval.",
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector)$",
+                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
                     "type": "string"
                 },
                 "code_challenge": {
@@ -128,7 +128,7 @@
             "type": "object",
             "x-examples": {
                 "invalid": ["../examples/invalid/pairing-create.json"],
-                "valid": ["../examples/valid/pairing-create.json"]
+                "valid": ["../examples/valid/pairing-create.json", "../examples/valid/pairing-create-android.json"]
             },
             "x-max-body-bytes": 2048
         },

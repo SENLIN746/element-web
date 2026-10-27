@@ -32,26 +32,35 @@ export function PairingView({ api, vm, server }: { api: Api; vm: PairingViewMode
         : "";
     return (
         <Form.Root className="mx_AgentIMAuth_form" onSubmit={submit}>
-            <Form.Field name="target">
-                <Form.Label>{t("agentim_pair_target")}</Form.Label>
-                <Form.TextControl
-                    required
-                    value={state.target}
-                    disabled={active}
-                    placeholder={`@research-agent:${server || "example.org"}`}
-                    onChange={(event) => vm.edit(event.target.value, state.device)}
-                />
-            </Form.Field>
-            <Form.Field name="device">
-                <Form.Label>{t("agentim_pair_device")}</Form.Label>
-                <Form.TextControl
-                    required
-                    maxLength={80}
-                    value={state.device}
-                    disabled={active}
-                    onChange={(event) => vm.edit(state.target, event.target.value)}
-                />
-            </Form.Field>
+            {active && state.request ? (
+                <div className="mx_AgentIMAuth_address">
+                    <strong>{state.target}</strong>
+                    <span>{state.device}</span>
+                </div>
+            ) : (
+                <>
+                    <Form.Field name="target">
+                        <Form.Label>{t("agentim_pair_target")}</Form.Label>
+                        <Form.TextControl
+                            required
+                            value={state.target}
+                            disabled={active}
+                            placeholder={`@research-agent:${server || "example.org"}`}
+                            onChange={(event) => vm.edit(event.target.value, state.device)}
+                        />
+                    </Form.Field>
+                    <Form.Field name="device">
+                        <Form.Label>{t("agentim_pair_device")}</Form.Label>
+                        <Form.TextControl
+                            required
+                            maxLength={80}
+                            value={state.device}
+                            disabled={active}
+                            onChange={(event) => vm.edit(state.target, event.target.value)}
+                        />
+                    </Form.Field>
+                </>
+            )}
             {state.phase === "waiting" && state.request && (
                 <div role="status" aria-live="polite">
                     <p>{t("agentim_pair_waiting")}</p>
@@ -78,9 +87,11 @@ export function PairingView({ api, vm, server }: { api: Api; vm: PairingViewMode
             )}
             {active ? (
                 <>
-                    <Button type="button" kind="primary" disabled>
-                        {t(`agentim_pair_${state.phase}`)}
-                    </Button>
+                    {state.phase !== "waiting" && (
+                        <Button type="button" kind="primary" disabled>
+                            {t(`agentim_pair_${state.phase}`)}
+                        </Button>
+                    )}
                     {state.phase !== "connecting" && (
                         <Button type="button" kind="tertiary" onClick={vm.cancel}>
                             {t("agentim_pair_cancel")}
