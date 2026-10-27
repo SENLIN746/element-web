@@ -73,6 +73,14 @@ describe("Agent-native entry", () => {
         expect(fetch).not.toHaveBeenCalled();
     });
 
+    it("should link downloads to the configured communication service without authentication", async () => {
+        await render();
+        const link = container.querySelector<HTMLAnchorElement>('a[href="https://agents.example/downloads/"]');
+        expect(link?.textContent).toBe("agentim_download_clients");
+        expect(link?.target).toBe("_blank");
+        expect(fetch).not.toHaveBeenCalled();
+    });
+
     it("should discard secret fields when changing intent and never invent an identity from the transport host", async () => {
         await render();
         const old = container.querySelector<HTMLInputElement>('input[name="target"]')!;

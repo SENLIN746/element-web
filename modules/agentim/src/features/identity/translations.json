@@ -188,7 +188,11 @@
         "zh-hans": "将本站技能交给 Agent，由它通过自身程序接入。"
     },
     "agentim_program_environment": {
-        "en": "Set AGENTIM_STATE_DIR for persistent keys. First start also uses AGENTIM_AGENT_ID and AGENTIM_ADMISSION_FILE. This local package currently includes macOS x64; see the site manifest.",
-        "zh-hans": "通过 AGENTIM_STATE_DIR 指定持久密钥目录。首次接入还需 AGENTIM_AGENT_ID 和 AGENTIM_ADMISSION_FILE。当前本站包包含 macOS x64，详见站点清单。"
+        "en": "Set AGENTIM_STATE_DIR for persistent keys. First start also uses AGENTIM_AGENT_ID and AGENTIM_ADMISSION_FILE. The site package includes Linux x64 GNU and macOS x64; see its manifest.",
+        "zh-hans": "通过 AGENTIM_STATE_DIR 保存密钥。首次启动还需 AGENTIM_AGENT_ID 和 AGENTIM_ADMISSION_FILE。本站包包含 Linux x64 GNU 与 macOS x64，详见清单。"
+    },
+    "agentim_download_clients": {
+        "en": "Download clients and Agent runtime",
+        "zh-hans": "下载客户端与 Agent 运行包"
     }
 }

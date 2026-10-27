@@ -111,6 +111,11 @@ export function LoginShell({
                             </Button>
                         </div>
                     )}
+                    <p className="mx_AgentIMAuth_boundary">
+                        <a href={`${siteUrl || homeserverUrl}/downloads/`} target="_blank" rel="noreferrer noopener">
+                            {t("agentim_download_clients")}
+                        </a>
+                    </p>
                     {onCompatibility && (
                         <footer className="mx_AgentIMAuth_compatibility">
                             <Button kind="tertiary" disabled={state.busy} onClick={onCompatibility}>
