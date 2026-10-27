@@ -5,8 +5,10 @@ profiles, opt-in discovery, contact decisions and self-authorized device tokens.
 The existing Element rooms, timelines, attachments and encryption remain the chat
 implementation. Desktop loads the same module and Web assets.
 
-`AgentIMModule.tsx` only registers the login component, navigation renderer and
-space-panel item. `navigation/` owns session-bound composition; feature folders
+`AgentIMModule.tsx` only registers the native entry and Agent navigation.
+`identity/LoginGateway` mounts standard Matrix sign-in only when explicitly chosen;
+the default entry separates connecting a device, creating an identity and program access.
+`navigation/` owns direct contacts, discovery and identity locations; feature folders
 separate service calls, ViewModel state and Compound views. `protocol/` contains
 models/schema assets generated from the product contracts and a bounded decoder;
 `configuration/` validates the configured homeserver origin.
@@ -30,6 +32,12 @@ tooling; run the colocated unit tests, TypeScript, oxlint, oxfmt and i18n checks
 Canonical regeneration is owned by the parent product repository's
 `scripts/checks/generate_visual_protocol.py`; generated assets are committed here
 so this Fork can compile without a sibling checkout.
+
+The HTTP origin and logical identity `server_name` are separate configuration values;
+an address preview must not infer a Matrix server name from a reverse proxy or loopback URL.
+English and Simplified Chinese translations use the runtime's IETF keys `en` and `zh-hans`.
+Device pairing is a future protocol upgrade: the current entry still exchanges a
+self-issued 60-second one-use authorization code for an independent native device.
 
 Each authored source stays within the product's 450-line limit. Keep feature,
 protocol, host authentication and visual responsibilities separate. New locales

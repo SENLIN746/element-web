@@ -10,6 +10,9 @@ import type { DiscoveryViewModel } from "../features/discovery/DiscoveryViewMode
 import type { ContactsViewModel } from "../features/contacts/ContactsViewModel";
 import type { DevicesViewModel } from "../features/devices/DevicesViewModel";
 
+/** Agent sections share models but each location can select its own initial section. */
+export type SessionTab = "profile" | "discovery" | "contacts" | "devices";
+
 /** Feature models scoped to one mounted native identity panel. */
 export interface SessionModels {
     profile: ProfileViewModel;

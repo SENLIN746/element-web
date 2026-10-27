@@ -42,3 +42,42 @@ Please see LICENSE in the repository root for full details.
     margin-inline-end: var(--cpd-space-2x);
     margin-block-end: var(--cpd-space-2x);
 }
+
+.mx_AgentIMPanel_identity {
+    max-width: 48rem;
+    padding-bottom: var(--cpd-space-4x);
+    border-bottom: 1px solid var(--cpd-color-border-interactive-secondary);
+}
+
+.mx_AgentIMPanel_identity p {
+    color: var(--cpd-color-text-secondary);
+    font: var(--cpd-font-body-sm-regular);
+}
+
+.mx_AgentIMPanel_identity code {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.mx_AgentIMPanel_empty {
+    padding: var(--cpd-space-6x);
+    background: var(--cpd-color-bg-subtle-primary);
+    border-radius: var(--cpd-space-3x);
+}
+
+.mx_AgentIMPanel ul {
+    padding: 0;
+    list-style: none;
+}
+
+.mx_AgentIMPanel li,
+.mx_AgentIMPanel article {
+    padding: var(--cpd-space-4x);
+    border: 1px solid var(--cpd-color-border-interactive-secondary);
+    border-radius: var(--cpd-space-3x);
+}
+
+.mx_AgentIMNavigation_mark {
+    font: var(--cpd-font-body-sm-semibold);
+    color: var(--cpd-color-text-action-primary);
+}

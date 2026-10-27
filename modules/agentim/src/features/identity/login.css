@@ -1,0 +1,261 @@
+/*
+Copyright 2026 alljoy
+
+SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE in the repository root for full details.
+*/
+
+.mx_AgentIMAuth {
+    box-sizing: border-box;
+    min-height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding: var(--cpd-space-12x) var(--cpd-space-6x);
+    color: var(--cpd-color-text-primary);
+    background: var(--cpd-color-bg-subtle-primary);
+    font: var(--cpd-font-body-md-regular);
+}
+
+.mx_AgentIMAuth *,
+.mx_AgentIMAuth *::before,
+.mx_AgentIMAuth *::after {
+    box-sizing: border-box;
+}
+
+.mx_AgentIMAuth_layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--cpd-space-16x);
+    align-items: center;
+    max-width: 1040px;
+    min-height: calc(100vh - 96px);
+    margin-inline: auto;
+}
+
+.mx_AgentIMAuth_intro {
+    min-width: 0;
+}
+
+.mx_AgentIMAuth_wordmark {
+    display: flex;
+    align-items: center;
+    gap: var(--cpd-space-3x);
+    margin-bottom: var(--cpd-space-12x);
+    color: var(--cpd-color-text-action-primary);
+    font: var(--cpd-font-heading-lg-semibold);
+}
+
+.mx_AgentIMAuth_eyebrow {
+    font: var(--cpd-font-body-xs-semibold);
+    letter-spacing: 0.12em;
+    color: var(--cpd-color-text-secondary);
+}
+
+.mx_AgentIMAuth h1 {
+    max-width: 440px;
+    margin-block: var(--cpd-space-4x) var(--cpd-space-6x);
+    font: var(--cpd-font-heading-xl-semibold);
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+    white-space: pre-line;
+}
+
+.mx_AgentIMAuth_summary {
+    max-width: 420px;
+    color: var(--cpd-color-text-secondary);
+    line-height: 1.7;
+}
+
+.mx_AgentIMAuth_principles {
+    display: grid;
+    gap: var(--cpd-space-6x);
+    margin-block: var(--cpd-space-10x);
+    padding: 0;
+    list-style: none;
+}
+
+.mx_AgentIMAuth_principles li {
+    display: flex;
+    gap: var(--cpd-space-4x);
+    align-items: baseline;
+}
+
+.mx_AgentIMAuth_principles li > span {
+    color: var(--cpd-color-text-action-primary);
+    font: var(--cpd-font-body-sm-medium);
+}
+
+.mx_AgentIMAuth_principles p {
+    margin-block: var(--cpd-space-1x) 0;
+    color: var(--cpd-color-text-secondary);
+    font: var(--cpd-font-body-sm-regular);
+    line-height: 1.6;
+}
+
+.mx_AgentIMAuth_server {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--cpd-space-3x);
+    font: var(--cpd-font-body-sm-regular);
+    color: var(--cpd-color-text-secondary);
+}
+
+.mx_AgentIMAuth_server strong {
+    color: var(--cpd-color-text-primary);
+    overflow-wrap: anywhere;
+}
+
+.mx_AgentIMAuth_card {
+    min-width: 0;
+    padding: var(--cpd-space-8x);
+    border: 1px solid var(--cpd-color-border-interactive-secondary);
+    border-radius: var(--cpd-space-6x);
+    background: var(--cpd-color-bg-canvas-default);
+    box-shadow: 0 12px 40px var(--cpd-color-bg-subtle-secondary);
+}
+
+.mx_AgentIMAuth_intents {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--cpd-space-1x);
+    padding-bottom: var(--cpd-space-6x);
+    margin-bottom: var(--cpd-space-6x);
+    border-bottom: 1px solid var(--cpd-color-border-interactive-secondary);
+}
+
+.mx_AgentIMAuth_intents button {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    height: auto;
+    padding-inline: var(--cpd-space-2x);
+    white-space: normal;
+    font: var(--cpd-font-body-sm-medium);
+}
+
+.mx_AgentIMAuth_context {
+    color: var(--cpd-color-text-secondary);
+    line-height: 1.65;
+    margin-block: var(--cpd-space-3x) var(--cpd-space-8x);
+}
+
+.mx_AgentIMAuth form {
+    display: grid;
+    gap: var(--cpd-space-4x);
+    margin: 0;
+}
+
+.mx_AgentIMAuth input {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: var(--cpd-space-2x);
+    padding: var(--cpd-space-3x);
+    border: 1px solid var(--cpd-color-border-interactive-primary);
+    border-radius: var(--cpd-space-2x);
+    background: var(--cpd-color-bg-canvas-default);
+    color: var(--cpd-color-text-primary);
+    font: var(--cpd-font-body-md-regular);
+}
+
+.mx_AgentIMAuth input:focus-visible,
+.mx_AgentIMAuth summary:focus-visible {
+    outline: 2px solid var(--cpd-color-border-focused);
+    outline-offset: 2px;
+}
+
+.mx_AgentIMAuth_fieldHelp,
+.mx_AgentIMAuth_boundary {
+    color: var(--cpd-color-text-secondary);
+    font: var(--cpd-font-body-sm-regular);
+    line-height: 1.65;
+    margin: 0;
+}
+
+.mx_AgentIMAuth_help {
+    margin-block: var(--cpd-space-6x);
+    font: var(--cpd-font-body-sm-regular);
+    line-height: 1.6;
+}
+
+.mx_AgentIMAuth_help summary {
+    cursor: pointer;
+    color: var(--cpd-color-text-action-primary);
+}
+
+.mx_AgentIMAuth_boundary {
+    margin-top: var(--cpd-space-6x);
+}
+
+.mx_AgentIMAuth_address,
+.mx_AgentIMAuth_endpoint {
+    display: grid;
+    gap: var(--cpd-space-1x);
+    margin: 0;
+    color: var(--cpd-color-text-secondary);
+    font: var(--cpd-font-body-sm-regular);
+}
+
+.mx_AgentIMAuth code {
+    display: block;
+    padding: var(--cpd-space-2x) 0;
+    color: var(--cpd-color-text-primary);
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.mx_AgentIMAuth_compatibility {
+    margin-top: var(--cpd-space-8x);
+    padding-top: var(--cpd-space-4x);
+    border-top: 1px solid var(--cpd-color-border-interactive-secondary);
+    text-align: center;
+}
+
+.mx_AgentIMAuth_program ol {
+    padding-left: var(--cpd-space-5x);
+    margin-block: var(--cpd-space-6x);
+}
+
+.mx_AgentIMAuth_program li + li {
+    margin-top: var(--cpd-space-5x);
+}
+
+.mx_AgentIMAuth_program li p {
+    color: var(--cpd-color-text-secondary);
+    font: var(--cpd-font-body-sm-regular);
+    line-height: 1.65;
+}
+
+.mx_AgentIMCompatibility_back {
+    position: fixed;
+    inset-block-start: var(--cpd-space-4x);
+    inset-inline-start: var(--cpd-space-4x);
+    z-index: 1;
+}
+
+@media (max-width: 820px) {
+    .mx_AgentIMAuth {
+        padding: var(--cpd-space-8x) var(--cpd-space-4x);
+    }
+
+    .mx_AgentIMAuth_layout {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: auto;
+        max-width: 520px;
+        gap: var(--cpd-space-8x);
+    }
+
+    .mx_AgentIMAuth_wordmark {
+        margin-bottom: var(--cpd-space-8x);
+    }
+
+    .mx_AgentIMAuth_principles {
+        display: none;
+    }
+
+    .mx_AgentIMAuth_card {
+        padding: var(--cpd-space-6x);
+    }
+}

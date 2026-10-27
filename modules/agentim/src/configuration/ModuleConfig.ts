@@ -14,6 +14,7 @@ declare module "@element-hq/element-web-module-api" {
 /** Configuration scoped to the AgentIM runtime module. It never contains credentials. */
 export interface ModuleConfig {
     readonly homeserverUrl: string;
+    readonly serverName?: string;
 }
 
 export const CONFIG_KEY = "im.agentim";
@@ -29,5 +30,13 @@ export function parseConfig(raw: unknown): ModuleConfig | null {
     const local = ["127.0.0.1", "localhost", "[::1]"].includes(url.hostname);
     if (url.protocol !== "https:" && !(url.protocol === "http:" && local))
         throw new Error("AgentIM requires HTTPS outside loopback");
-    return { homeserverUrl: url.origin };
+    let serverName: string | undefined;
+    if ("server_name" in raw) {
+        if (typeof raw.server_name !== "string" || !/^[a-z0-9.\-:[\]]{1,255}$/i.test(raw.server_name))
+            throw new Error("AgentIM identity server name is invalid");
+        const identity = new URL(`https://${raw.server_name}`);
+        if (!identity.hostname) throw new Error("AgentIM identity server name is invalid");
+        serverName = raw.server_name;
+    }
+    return { homeserverUrl: url.origin, ...(serverName ? { serverName } : {}) };
 }

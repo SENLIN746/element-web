@@ -12,7 +12,15 @@ import type { ContactsViewModel } from "./ContactsViewModel";
 import { ContactActions } from "./ContactActions";
 
 /** Contact state is refreshed explicitly and standard chats open through the host. */
-export function ContactsView({ vm, api }: { vm: ContactsViewModel; api: Api }): JSX.Element {
+export function ContactsView({
+    vm,
+    api,
+    onDiscover,
+}: {
+    vm: ContactsViewModel;
+    api: Api;
+    onDiscover?: () => void;
+}): JSX.Element {
     const state = useWatchable(vm.state);
     const t = api.i18n.translate;
     useEffect(() => {
@@ -28,6 +36,17 @@ export function ContactsView({ vm, api }: { vm: ContactsViewModel; api: Api }): 
     };
     return (
         <section aria-label={t("agentim_contacts")}>
+            <p>{t("agentim_contacts_hint")}</p>
+            {!state.busy && !state.failed && state.contacts.length === 0 && (
+                <div className="mx_AgentIMPanel_empty">
+                    <p>{t("agentim_contacts_empty")}</p>
+                    {onDiscover && (
+                        <Button kind="primary" onClick={onDiscover}>
+                            {t("agentim_discovery")}
+                        </Button>
+                    )}
+                </div>
+            )}
             <Form.Root onSubmit={requestContact}>
                 <Form.Field name="userId">
                     <Form.Label>{t("agentim_contact_mxid")}</Form.Label>

@@ -27,4 +27,18 @@ describe("AgentIM configuration", () => {
     ])("should reject unsafe homeserver URL %s", (url) => {
         expect(() => parseConfig({ homeserver_url: url })).toThrow();
     });
+
+    it("should keep the logical identity server separate from the HTTP transport address", () => {
+        expect(parseConfig({ homeserver_url: "http://127.0.0.1:8008", server_name: "agents.example:8448" })).toEqual({
+            homeserverUrl: "http://127.0.0.1:8008",
+            serverName: "agents.example:8448",
+        });
+    });
+
+    it.each(["", "user@agents.example", "agents.example/path", "agents.example?secret=x", "bad server", null, 123])(
+        "should reject invalid identity server names",
+        (serverName) => {
+            expect(() => parseConfig({ homeserver_url: "https://agents.example", server_name: serverName })).toThrow();
+        },
+    );
 });

@@ -15,11 +15,11 @@ import { ContactService } from "../features/contacts/ContactService";
 import { ContactsViewModel } from "../features/contacts/ContactsViewModel";
 import { DevicesViewModel } from "../features/devices/DevicesViewModel";
 
-import type { SessionModels } from "./SessionModels";
+import type { SessionModels, SessionTab } from "./SessionModels";
 import { SessionContent } from "./SessionContent";
 
 /** Construct and dispose feature state inside the owning effect, including StrictMode replay. */
-export function SessionView({ api }: { api: Api }): JSX.Element {
+export function SessionView({ api, initialTab }: { api: Api; initialTab: SessionTab }): JSX.Element {
     const [models, setModels] = useState<SessionModels | null>(null);
     useEffect(() => {
         const profiles = new ProfileService(api.client.agentim);
@@ -35,7 +35,7 @@ export function SessionView({ api }: { api: Api }): JSX.Element {
         };
     }, [api]);
     return models ? (
-        <SessionContent api={api} models={models} />
+        <SessionContent api={api} models={models} initialTab={initialTab} />
     ) : (
         <p role="status">{api.i18n.translate("agentim_busy")}</p>
     );

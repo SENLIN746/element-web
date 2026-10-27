@@ -8,12 +8,14 @@ Please see LICENSE in the repository root for full details.
 import React from "react";
 import type { Api, Module } from "@element-hq/element-web-module-api";
 import { CONFIG_KEY, parseConfig } from "./configuration/ModuleConfig";
-import { LoginView } from "./features/identity/LoginView";
-import { AgentIMPanel } from "./navigation/AgentIMPanel";
+import { LoginGateway } from "./features/identity/LoginGateway";
+import { registerAgentNavigation } from "./navigation/AgentNavigation";
 import translations from "./translations.json";
+import identityTranslations from "./features/identity/translations.json";
 import style from "./style.css?inline";
+import loginStyle from "./features/identity/login.css?inline";
 
-/** Register AgentIM forms and navigation while retaining the host's standard login and chat views. */
+/** Register the native entry and Agent navigation; standard rooms and encryption remain host-owned. */
 export class AgentIMModule implements Module {
     public static readonly moduleApiVersion = "^2.2.0";
     public constructor(private readonly api: Api) {}
@@ -21,23 +23,13 @@ export class AgentIMModule implements Module {
     public async load(): Promise<void> {
         const config = parseConfig(this.api.config.get(CONFIG_KEY));
         if (!config) return;
-        this.api.i18n.register(translations);
+        this.api.i18n.register({ ...translations, ...identityTranslations });
         const stylesheet = document.createElement("style");
-        stylesheet.textContent = style;
+        stylesheet.textContent = style + loginStyle;
         document.head.append(stylesheet);
         this.api.customComponents.registerLoginComponent((props, OriginalComponent) => (
-            <OriginalComponent {...props}>
-                {props.children}
-                <LoginView {...props} api={this.api} config={config} />
-            </OriginalComponent>
+            <LoginGateway {...props} api={this.api} config={config} compatibility={<OriginalComponent {...props} />} />
         ));
-        this.api.navigation.registerLocationRenderer("agentim", () => <AgentIMPanel api={this.api} />);
-        this.api.extras.setSpacePanelItem("im.agentim", {
-            label: this.api.i18n.translate("agentim_title"),
-            tooltip: this.api.i18n.translate("agentim_title"),
-            onSelected: () => {
-                window.location.hash = "#/agentim";
-            },
-        });
+        registerAgentNavigation(this.api);
     }
 }

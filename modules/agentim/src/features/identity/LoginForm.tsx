@@ -6,77 +6,84 @@ Please see LICENSE in the repository root for full details.
 */
 
 import React, { type JSX, type FormEvent } from "react";
-import { Form, Heading } from "@vector-im/compound-web";
-import { useWatchable, type Api, type CustomLoginComponentProps } from "@element-hq/element-web-module-api";
+import { Form } from "@vector-im/compound-web";
+import { useWatchable, type Api } from "@element-hq/element-web-module-api";
 import type { LoginViewModel } from "./LoginViewModel";
 
-/** Render credential forms against an owned authentication view model. */
-export function LoginForm({
-    api,
-    vm,
-    homeserverUrl,
-    serverConfig,
-}: {
-    api: Api;
-    vm: LoginViewModel;
-    homeserverUrl: string;
-} & Pick<CustomLoginComponentProps, "serverConfig">): JSX.Element {
+/** One intent per form; submitted secrets are cleared before authentication begins. */
+export function LoginForm({ api, vm, server }: { api: Api; vm: LoginViewModel; server?: string }): JSX.Element {
     const state = useWatchable(vm.state);
+    const enroll = state.intent === "enroll";
     const t = api.i18n.translate;
-    let serverMatches = false;
-    try {
-        serverMatches = new URL(serverConfig.hsUrl).origin === homeserverUrl;
-    } catch {
-        /* Disabled below. */
-    }
-    if (!serverMatches) return <p role="alert">{t("agentim_server_mismatch")}</p>;
-    const submit =
-        (kind: "login" | "enroll") =>
-        (event: FormEvent<HTMLFormElement>): void => {
-            event.preventDefault();
-            const form = event.currentTarget;
-            const data = new FormData(form);
-            const tokenField = data.get(kind === "login" ? "loginToken" : "enrollmentToken");
-            const token = typeof tokenField === "string" ? tokenField : "";
-            const nameField = data.get("localpart");
-            const localpart = typeof nameField === "string" ? nameField : "";
-            form.reset();
-            if (kind === "login") void vm.login(token);
-            else void vm.enroll(localpart, token);
-        };
+    const submit = (event: FormEvent<HTMLFormElement>): void => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const data = new FormData(form);
+        const field = data.get(enroll ? "enrollmentToken" : "loginToken");
+        const secret = typeof field === "string" ? field : "";
+        const localpart = data.get("localpart");
+        form.reset();
+        if (enroll) void vm.enroll(typeof localpart === "string" ? localpart : "", secret);
+        else void vm.login(secret);
+    };
     return (
-        <section aria-label={t("agentim_auth_title")}>
-            <Heading as="h2" size="sm">
-                {t("agentim_auth_title")}
-            </Heading>
-            <Form.Root onSubmit={submit("login")}>
-                <Form.Field name="loginToken">
-                    <Form.Label>{t("agentim_login_token")}</Form.Label>
-                    <Form.TextControl type="password" autoComplete="off" required disabled={state.busy} />
-                </Form.Field>
-                <Form.Submit disabled={state.busy}>{t("agentim_login")}</Form.Submit>
-            </Form.Root>
-            <Form.Root onSubmit={submit("enroll")}>
-                <Form.Field name="localpart">
-                    <Form.Label>{t("agentim_localpart")}</Form.Label>
+        <>
+            <Form.Root onSubmit={submit}>
+                {enroll && (
+                    <>
+                        <Form.Field name="localpart">
+                            <Form.Label>{t("agentim_localpart")}</Form.Label>
+                            <Form.TextControl
+                                required
+                                minLength={3}
+                                maxLength={64}
+                                pattern="[a-z][a-z0-9._=\-]{2,63}"
+                                autoComplete="off"
+                                autoCapitalize="none"
+                                spellCheck={false}
+                                disabled={state.busy}
+                                placeholder="research-agent"
+                                onChange={(event) => vm.editLocalpart(event.currentTarget.value)}
+                                aria-describedby="agentim-address-preview"
+                            />
+                        </Form.Field>
+                        <p id="agentim-address-preview" className="mx_AgentIMAuth_address">
+                            {t("agentim_identity_address")}
+                            <code>
+                                {server
+                                    ? `@${state.localpart || "research-agent"}:${server}`
+                                    : state.localpart || "research-agent"}
+                            </code>
+                        </p>
+                    </>
+                )}
+                <Form.Field name={enroll ? "enrollmentToken" : "loginToken"}>
+                    <Form.Label>{t(enroll ? "agentim_enrollment_token" : "agentim_login_token")}</Form.Label>
                     <Form.TextControl
-                        required
-                        minLength={3}
-                        maxLength={64}
-                        pattern="[a-z][a-z0-9._=\-]{2,63}"
+                        type="password"
                         autoComplete="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        required
+                        maxLength={enroll ? 8192 : 4096}
                         disabled={state.busy}
+                        aria-describedby="agentim-credential-help"
                     />
                 </Form.Field>
-                <Form.Field name="enrollmentToken">
-                    <Form.Label>{t("agentim_enrollment_token")}</Form.Label>
-                    <Form.TextControl type="password" autoComplete="off" required disabled={state.busy} />
-                </Form.Field>
-                <Form.Submit disabled={state.busy}>{t("agentim_register")}</Form.Submit>
+                <p id="agentim-credential-help" className="mx_AgentIMAuth_fieldHelp">
+                    {t(enroll ? "agentim_enrollment_help" : "agentim_authorization_help")}
+                </p>
+                <Form.Submit disabled={state.busy}>{t(enroll ? "agentim_register" : "agentim_login")}</Form.Submit>
             </Form.Root>
-            <p>{t("agentim_token_hint")}</p>
+            {!enroll && (
+                <details className="mx_AgentIMAuth_help">
+                    <summary>{t("agentim_authorization_source")}</summary>
+                    <p>{t("agentim_authorization_source_hint")}</p>
+                </details>
+            )}
+            <p className="mx_AgentIMAuth_boundary">{t(enroll ? "agentim_enroll_boundary" : "agentim_token_hint")}</p>
             {state.busy && <p role="status">{t("agentim_busy")}</p>}
             {state.failed && <p role="alert">{t("agentim_auth_failed")}</p>}
-        </section>
+        </>
     );
 }

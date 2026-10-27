@@ -31,6 +31,7 @@ export function DiscoveryView({
     const selected = state.selected;
     return (
         <section aria-label={t("agentim_discovery")}>
+            <p>{t("agentim_discovery_hint")}</p>
             <Form.Root
                 onSubmit={(event) => {
                     event.preventDefault();

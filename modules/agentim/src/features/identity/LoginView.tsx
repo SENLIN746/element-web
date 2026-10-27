@@ -10,7 +10,7 @@ import type { Api, CustomLoginComponentProps } from "@element-hq/element-web-mod
 import type { ModuleConfig } from "../../configuration/ModuleConfig";
 import { IdentityService } from "./IdentityService";
 import { LoginViewModel } from "./LoginViewModel";
-import { LoginForm } from "./LoginForm";
+import { LoginShell } from "./LoginShell";
 
 /** Own authentication state for this mount, including React StrictMode effect replay. */
 export function LoginView({
@@ -18,9 +18,12 @@ export function LoginView({
     config,
     onLoggedIn,
     serverConfig,
+    onServerConfigChange,
+    onCompatibility,
 }: {
     api: Api;
     config: ModuleConfig;
+    onCompatibility?: () => void;
 } & CustomLoginComponentProps): JSX.Element | null {
     const [vm, setViewModel] = useState<LoginViewModel | null>(null);
     useEffect(() => {
@@ -28,5 +31,15 @@ export function LoginView({
         setViewModel(model);
         return () => model.dispose();
     }, [config, onLoggedIn]);
-    return vm ? <LoginForm api={api} vm={vm} homeserverUrl={config.homeserverUrl} serverConfig={serverConfig} /> : null;
+    return vm ? (
+        <LoginShell
+            api={api}
+            vm={vm}
+            homeserverUrl={config.homeserverUrl}
+            identityServerName={config.serverName}
+            serverConfig={serverConfig}
+            onServerConfigChange={onServerConfigChange}
+            onCompatibility={onCompatibility}
+        />
+    ) : null;
 }
