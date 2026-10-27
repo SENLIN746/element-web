@@ -13,7 +13,7 @@ import { decode } from "../../protocol/validation";
 export class IdentityService {
     public constructor(private readonly config: ModuleConfig) {}
 
-    private async post(path: string, body: unknown, signal: AbortSignal, bearer?: string): Promise<unknown> {
+    public async post(path: string, body: unknown, signal: AbortSignal, bearer?: string): Promise<unknown> {
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (bearer !== undefined) {
             if (!bearer || bearer.length > 8192 || !/^[\x21-\x7e]+$/.test(bearer))
@@ -23,7 +23,9 @@ export class IdentityService {
         const serialized = JSON.stringify(body);
         if (new TextEncoder().encode(serialized).byteLength > 8192)
             throw new Error("Identity request exceeds its byte budget");
-        const response = await fetch(new URL(path, this.config.homeserverUrl), {
+        const endpoint = new URL(path, this.config.homeserverUrl);
+        if (endpoint.origin !== this.config.homeserverUrl) throw new Error("Identity origin changed");
+        const response = await fetch(endpoint, {
             method: "POST",
             headers,
             body: serialized,

@@ -9,6 +9,15 @@ import { describe, expect, it } from "vitest";
 import { parseConfig } from "./ModuleConfig";
 
 describe("AgentIM configuration", () => {
+    it("should pin a separate public site for native Desktop program access", () => {
+        expect(parseConfig({ homeserver_url: "https://matrix.example", site_url: "https://agents.example" })).toEqual({
+            homeserverUrl: "https://matrix.example",
+            siteUrl: "https://agents.example",
+        });
+        for (const site_url of [123, "http://public.example", "https://u:p@example.org", "https://example.org/path"]) {
+            expect(() => parseConfig({ homeserver_url: "https://matrix.example", site_url })).toThrow();
+        }
+    });
     it("should be opt-in and accept HTTPS or explicit loopback development", () => {
         expect(parseConfig(undefined)).toBeNull();
         expect(parseConfig({ homeserver_url: "https://agents.example/" })).toEqual({

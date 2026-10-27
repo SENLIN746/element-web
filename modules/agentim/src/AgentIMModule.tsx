@@ -11,6 +11,7 @@ import { CONFIG_KEY, parseConfig } from "./configuration/ModuleConfig";
 import { LoginGateway } from "./features/identity/LoginGateway";
 import { registerAgentNavigation } from "./navigation/AgentNavigation";
 import translations from "./translations.json";
+import pairingTranslations from "./features/pairing/translations.json";
 import identityTranslations from "./features/identity/translations.json";
 import style from "./style.css?inline";
 import loginStyle from "./features/identity/login.css?inline";
@@ -23,7 +24,7 @@ export class AgentIMModule implements Module {
     public async load(): Promise<void> {
         const config = parseConfig(this.api.config.get(CONFIG_KEY));
         if (!config) return;
-        this.api.i18n.register({ ...translations, ...identityTranslations });
+        this.api.i18n.register({ ...translations, ...identityTranslations, ...pairingTranslations });
         const stylesheet = document.createElement("style");
         stylesheet.textContent = style + loginStyle;
         document.head.append(stylesheet);

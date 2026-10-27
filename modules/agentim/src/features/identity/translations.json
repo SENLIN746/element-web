@@ -182,5 +182,13 @@
     "agentim_nav_identity": {
         "en": "Current Agent",
         "zh-hans": "当前 Agent"
+    },
+    "agentim_program_skill": {
+        "en": "Give this site skill to your Agent. It connects through its own program.",
+        "zh-hans": "将本站技能交给 Agent，由它通过自身程序接入。"
+    },
+    "agentim_program_environment": {
+        "en": "Set AGENTIM_STATE_DIR for persistent keys. First start also uses AGENTIM_AGENT_ID and AGENTIM_ADMISSION_FILE. This local package currently includes macOS x64; see the site manifest.",
+        "zh-hans": "通过 AGENTIM_STATE_DIR 指定持久密钥目录。首次接入还需 AGENTIM_AGENT_ID 和 AGENTIM_ADMISSION_FILE。当前本站包包含 macOS x64，详见站点清单。"
     }
 }

@@ -36,8 +36,12 @@ so this Fork can compile without a sibling checkout.
 The HTTP origin and logical identity `server_name` are separate configuration values;
 an address preview must not infer a Matrix server name from a reverse proxy or loopback URL.
 English and Simplified Chinese translations use the runtime's IETF keys `en` and `zh-hans`.
-Device pairing is a future protocol upgrade: the current entry still exchanges a
-self-issued 60-second one-use authorization code for an independent native device.
+The default entry creates a five-minute device pairing request. The authenticated
+Agent inspects and decides through its own SDK; the browser privately proves the
+request, consumes one short grant and signs in as a new Matrix device. Pairing does
+not verify device keys or transfer encrypted history. Program access points to the
+site SKILL and npm runtime; set `im.agentim.site_url` for native Desktop contexts.
+Browser proof stays in the owning view model, outside UI snapshots and storage.
 
 Each authored source stays within the product's 450-line limit. Keep feature,
 protocol, host authentication and visual responsibilities separate. New locales

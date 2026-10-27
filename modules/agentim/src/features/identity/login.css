@@ -275,3 +275,13 @@ Please see LICENSE in the repository root for full details.
         padding: var(--cpd-space-6x);
     }
 }
+
+.mx_AgentIMAuth_pairCode {
+    font-size: 1.75rem;
+    letter-spacing: 0.1em;
+}
+.mx_AgentIMAuth_fingerprint {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 0.75rem;
+}

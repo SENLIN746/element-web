@@ -9,6 +9,7 @@ import React, { type JSX } from "react";
 import { Button, Heading } from "@vector-im/compound-web";
 import { useWatchable, type Api, type CustomLoginComponentProps } from "@element-hq/element-web-module-api";
 import type { LoginViewModel } from "./LoginViewModel";
+import { PairingView } from "../pairing/PairingView";
 import { LoginForm } from "./LoginForm";
 import { ProgramAccessView } from "./ProgramAccessView";
 
@@ -17,6 +18,7 @@ export function LoginShell({
     api,
     vm,
     homeserverUrl,
+    siteUrl,
     identityServerName,
     serverConfig,
     onServerConfigChange,
@@ -25,6 +27,7 @@ export function LoginShell({
     api: Api;
     vm: LoginViewModel;
     homeserverUrl: string;
+    siteUrl?: string;
     identityServerName?: string;
     onCompatibility?: () => void;
 } & Pick<CustomLoginComponentProps, "serverConfig" | "onServerConfigChange">): JSX.Element {
@@ -90,9 +93,13 @@ export function LoginShell({
                     </Heading>
                     <p className="mx_AgentIMAuth_context">{t(`agentim_intent_${state.intent}_hint`)}</p>
                     {state.intent === "program" ? (
-                        <ProgramAccessView api={api} homeserverUrl={homeserverUrl} />
+                        <ProgramAccessView api={api} siteUrl={siteUrl} />
                     ) : serverMatches ? (
-                        <LoginForm key={state.intent} api={api} vm={vm} server={identityServerName} />
+                        state.intent === "connect" ? (
+                            <PairingView api={api} vm={vm.pairing} server={identityServerName} />
+                        ) : (
+                            <LoginForm key={state.intent} api={api} vm={vm} server={identityServerName} />
+                        )
                     ) : (
                         <div role="alert">
                             <p>{t("agentim_server_mismatch")}</p>

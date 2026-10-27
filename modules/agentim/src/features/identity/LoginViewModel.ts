@@ -6,6 +6,8 @@ Please see LICENSE in the repository root for full details.
 */
 
 import { Watchable, type AccountAuthInfo } from "@element-hq/element-web-module-api";
+import { PairingService } from "../pairing/PairingService";
+import { PairingViewModel } from "../pairing/PairingViewModel";
 import type { IdentityService } from "./IdentityService";
 
 /** The three distinct reasons to open the AgentIM entry. */
@@ -26,14 +28,21 @@ export class LoginViewModel {
         busy: false,
         failed: false,
     });
+    public readonly pairing: PairingViewModel;
     private readonly controller = new AbortController();
     public constructor(
         private readonly service: IdentityService,
         private readonly onLoggedIn: (account: AccountAuthInfo) => void,
-    ) {}
+    ) {
+        this.pairing = new PairingViewModel(new PairingService(service), (account) => {
+            this.state.value = { ...this.state.value, busy: true };
+            this.onLoggedIn(account);
+        });
+    }
 
     public readonly selectIntent = (intent: LoginIntent): void => {
         if (this.controller.signal.aborted || this.state.value.busy) return;
+        this.pairing.cancel();
         this.state.value = { intent, localpart: "", busy: false, failed: false };
     };
 
@@ -65,6 +74,7 @@ export class LoginViewModel {
     public readonly enroll = (localpart: string, token: string): Promise<void> =>
         this.run(() => this.service.enroll(localpart, token, this.controller.signal));
     public dispose(): void {
+        this.pairing.dispose();
         this.controller.abort();
     }
 }

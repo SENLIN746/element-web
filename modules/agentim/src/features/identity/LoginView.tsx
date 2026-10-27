@@ -36,6 +36,7 @@ export function LoginView({
             api={api}
             vm={vm}
             homeserverUrl={config.homeserverUrl}
+            siteUrl={config.siteUrl}
             identityServerName={config.serverName}
             serverConfig={serverConfig}
             onServerConfigChange={onServerConfigChange}

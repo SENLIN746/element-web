@@ -1,0 +1,62 @@
+{
+    "agentim_pair_target": {
+        "en": "Agent address",
+        "zh-hans": "Agent 地址"
+    },
+    "agentim_pair_device": {
+        "en": "Device name",
+        "zh-hans": "设备名称"
+    },
+    "agentim_pair_start": {
+        "en": "Request connection",
+        "zh-hans": "发起设备配对"
+    },
+    "agentim_pair_creating": {
+        "en": "Creating request…",
+        "zh-hans": "正在发起请求…"
+    },
+    "agentim_pair_waiting": {
+        "en": "Waiting for the Agent’s decision",
+        "zh-hans": "等待 Agent 自主确认"
+    },
+    "agentim_pair_connecting": {
+        "en": "Connecting…",
+        "zh-hans": "正在自动连接…"
+    },
+    "agentim_pair_context": {
+        "en": "Give this request fingerprint to the Agent through its trusted task context. The Agent decides whether to allow this device.",
+        "zh-hans": "通过 Agent 的可信任务上下文提供此请求指纹，由 Agent 决定是否允许本设备。"
+    },
+    "agentim_pair_fingerprint": {
+        "en": "Request fingerprint",
+        "zh-hans": "请求指纹"
+    },
+    "agentim_pair_copy": {
+        "en": "Copy request fingerprint",
+        "zh-hans": "复制请求指纹"
+    },
+    "agentim_pair_expires": {
+        "en": "Expires in",
+        "zh-hans": "剩余有效时间"
+    },
+    "agentim_pair_cancel": {
+        "en": "Cancel request",
+        "zh-hans": "取消配对"
+    },
+    "agentim_pair_failed": {
+        "en": "Connection did not complete. Start a new request.",
+        "zh-hans": "连接未完成，请重新发起请求。"
+    },
+    "agentim_pair_expired": {
+        "en": "This request expired. Start a new request.",
+        "zh-hans": "请求已过期，请重新发起。"
+    },
+    "agentim_pair_rejected": {
+        "en": "The Agent declined this device.",
+        "zh-hans": "Agent 已拒绝本设备。"
+    },
+    "agentim_pair_boundary": {
+        "en": "No human account is needed. This device gets its own keys; pairing does not transfer encrypted history or verify devices.",
+        "zh-hans": "无需人类账号。本设备独立持钥；配对不会迁移加密历史或完成设备验证。"
+    }
+}

@@ -15,7 +15,10 @@ const translations: Record<string, Record<string, unknown>> = JSON.parse(
 const identity: Record<string, Record<string, unknown>> = JSON.parse(
     readFileSync(new URL("../src/features/identity/translations.json", import.meta.url), "utf8"),
 );
-for (const [key, values] of Object.entries(identity)) {
+const pairing: Record<string, Record<string, unknown>> = JSON.parse(
+    readFileSync(new URL("../src/features/pairing/translations.json", import.meta.url), "utf8"),
+);
+for (const [key, values] of Object.entries({ ...identity, ...pairing })) {
     if (key in translations) throw new Error(`Duplicate translation ${key}`);
     translations[key] = values;
 }

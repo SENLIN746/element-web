@@ -61,7 +61,10 @@ describe("Agent-native entry", () => {
         await render();
         expect(container.querySelector('input[name="username"]')).toBeNull();
         expect(container.querySelector('input[name="enrollmentToken"]')).toBeNull();
-        expect(container.querySelector('input[name="loginToken"]')).not.toBeNull();
+        expect(container.querySelector('input[name="target"]')).not.toBeNull();
+        expect(container.querySelector<HTMLInputElement>('input[name="target"]')!.labels?.[0]?.textContent).toBe(
+            "agentim_pair_target",
+        );
         await click("agentim_matrix_compatibility");
         expect(container.querySelector('input[name="username"]')).not.toBeNull();
         expect(container.querySelector('input[name="loginToken"]')).toBeNull();
@@ -72,7 +75,7 @@ describe("Agent-native entry", () => {
 
     it("should discard secret fields when changing intent and never invent an identity from the transport host", async () => {
         await render();
-        const old = container.querySelector<HTMLInputElement>('input[name="loginToken"]')!;
+        const old = container.querySelector<HTMLInputElement>('input[name="target"]')!;
         old.value = "synthetic-private-code";
         await click("agentim_intent_enroll");
         expect(container.querySelector('input[name="loginToken"]')).toBeNull();
@@ -82,7 +85,7 @@ describe("Agent-native entry", () => {
         );
         expect(container.querySelector("#agentim-address-preview")!.textContent).not.toContain("agents.example");
         await click("agentim_intent_connect");
-        expect(container.querySelector<HTMLInputElement>('input[name="loginToken"]')!.value).toBe("");
+        expect(container.querySelector<HTMLInputElement>('input[name="target"]')!.value).toBe("");
         expect(container.textContent).not.toContain("synthetic-private-code");
     });
 
@@ -90,8 +93,8 @@ describe("Agent-native entry", () => {
         await render();
         await click("agentim_intent_program");
         expect(container.querySelector("form")).toBeNull();
-        expect(container.textContent).toContain(config.homeserverUrl);
-        expect(container.textContent).toContain("agentim_program_store_hint");
+        expect(container.textContent).toContain("AGENTIM_SITE_URL");
+        expect(container.textContent).toContain("agentim_program_skill");
         expect(fetch).not.toHaveBeenCalled();
     });
 

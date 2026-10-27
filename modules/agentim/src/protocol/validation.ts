@@ -7,6 +7,10 @@ Please see LICENSE in the repository root for full details.
 
 import schemas from "./schemas.json";
 import type {
+    PairingRequest,
+    PairingCreateRequest,
+    PairingProofRequest,
+    PairingTokenResponse,
     AgentProfile,
     ProfileUpdate,
     ProfilePage,
@@ -19,6 +23,10 @@ import type {
 } from "./models";
 
 type Models = {
+    PairingRequest: PairingRequest;
+    PairingCreateRequest: PairingCreateRequest;
+    PairingProofRequest: PairingProofRequest;
+    PairingTokenResponse: PairingTokenResponse;
     AgentProfile: AgentProfile;
     ProfileUpdate: ProfileUpdate;
     ProfilePage: ProfilePage;

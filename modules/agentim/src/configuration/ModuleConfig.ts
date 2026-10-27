@@ -15,6 +15,7 @@ declare module "@element-hq/element-web-module-api" {
 export interface ModuleConfig {
     readonly homeserverUrl: string;
     readonly serverName?: string;
+    readonly siteUrl?: string;
 }
 
 export const CONFIG_KEY = "im.agentim";
@@ -38,5 +39,11 @@ export function parseConfig(raw: unknown): ModuleConfig | null {
         if (!identity.hostname) throw new Error("AgentIM identity server name is invalid");
         serverName = raw.server_name;
     }
-    return { homeserverUrl: url.origin, ...(serverName ? { serverName } : {}) };
+    let siteUrl: string | undefined;
+    if ("site_url" in raw) {
+        if (typeof raw.site_url !== "string") throw new Error("Invalid AgentIM site URL");
+        const parsed = parseConfig({ homeserver_url: raw.site_url });
+        siteUrl = parsed?.homeserverUrl;
+    }
+    return { homeserverUrl: url.origin, ...(serverName ? { serverName } : {}), ...(siteUrl ? { siteUrl } : {}) };
 }

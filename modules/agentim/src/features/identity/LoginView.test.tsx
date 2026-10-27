@@ -20,16 +20,28 @@ describe("LoginView lifecycle", () => {
         vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
         vi.stubGlobal(
             "fetch",
-            vi.fn().mockResolvedValue(
-                new Response(
-                    JSON.stringify({
-                        user_id: "@agent:example",
-                        device_id: "NEW",
-                        access_token: "test-device-token",
-                    }),
-                    { headers: { "content-type": "application/json" } },
+            vi
+                .fn()
+                .mockResolvedValueOnce(
+                    new Response(
+                        JSON.stringify({
+                            user_id: "@agent:example",
+                            login_token: "short-one-use",
+                            expires_in_ms: 60000,
+                        }),
+                        { headers: { "content-type": "application/json" } },
+                    ),
+                )
+                .mockResolvedValue(
+                    new Response(
+                        JSON.stringify({
+                            user_id: "@agent:example",
+                            device_id: "NEW",
+                            access_token: "test-device-token",
+                        }),
+                        { headers: { "content-type": "application/json" } },
+                    ),
                 ),
-            ),
         );
         const container = document.createElement("div");
         document.body.append(container);
@@ -50,7 +62,13 @@ describe("LoginView lifecycle", () => {
                     </StrictMode>,
                 ),
             );
-            const input = container.querySelector<HTMLInputElement>('input[name="loginToken"]');
+            await act(async () =>
+                [...container.querySelectorAll("button")]
+                    .find((button) => button.textContent === "agentim_intent_enroll")!
+                    .click(),
+            );
+            container.querySelector<HTMLInputElement>('input[name="localpart"]')!.value = "agent";
+            const input = container.querySelector<HTMLInputElement>('input[name="enrollmentToken"]');
             expect(input).not.toBeNull();
             input!.value = "short-one-use";
             await act(async () => {
