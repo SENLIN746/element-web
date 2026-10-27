@@ -94,6 +94,8 @@ describe("Agent-native entry", () => {
         await click("agentim_intent_program");
         expect(container.querySelector("form")).toBeNull();
         expect(container.textContent).toContain("AGENTIM_SITE_URL");
+        expect(container.textContent).toContain("agentim-runtime-0.1.1.tgz");
+        expect(container.textContent).not.toContain("agentim-runtime-0.1.0.tgz");
         expect(container.textContent).toContain("agentim_program_skill");
         expect(fetch).not.toHaveBeenCalled();
     });

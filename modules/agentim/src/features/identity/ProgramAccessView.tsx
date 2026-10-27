@@ -24,7 +24,7 @@ export function ProgramAccessView({ api, siteUrl }: { api: Api; siteUrl?: string
                         SKILL.md
                     </a>
                     <pre className="mx_AgentIMAuth_fingerprint">{command}</pre>
-                    <pre className="mx_AgentIMAuth_fingerprint">{`npm install "$AGENTIM_SITE_URL/agentim/packages/agentim-runtime-0.1.0.tgz"`}</pre>
+                    <pre className="mx_AgentIMAuth_fingerprint">{`npm install "$AGENTIM_SITE_URL/agentim/packages/agentim-runtime-0.1.1.tgz"`}</pre>
                 </>
             )}
             <pre className="mx_AgentIMAuth_fingerprint">{`import { startAgentFromEnv } from "@agentim/runtime";\nconst agent = await startAgentFromEnv();\n// agent.client: identity, contacts, messages, pairing\n// await agent.close() when the program stops`}</pre>
