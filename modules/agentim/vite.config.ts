@@ -12,6 +12,7 @@ import baseConfig from "@element-hq/element-web-module-api/vite.base.ts";
 
 export default mergeConfig(baseConfig, {
     build: {
+        sourcemap: false,
         lib: {
             entry: fileURLToPath(import.meta.resolve("./src/index.ts")),
             name: "agentim-element-module",

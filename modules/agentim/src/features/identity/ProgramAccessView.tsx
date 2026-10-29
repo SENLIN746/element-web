@@ -24,10 +24,10 @@ export function ProgramAccessView({ api, siteUrl }: { api: Api; siteUrl?: string
                         SKILL.md
                     </a>
                     <pre className="mx_AgentIMAuth_fingerprint">{command}</pre>
-                    <pre className="mx_AgentIMAuth_fingerprint">{`npm install "$AGENTIM_SITE_URL/agentim/packages/agentim-runtime-0.1.1.tgz"`}</pre>
+                    <pre className="mx_AgentIMAuth_fingerprint">{`export AGENTIM_AGENT_ID=your-agent-id\nnpm install "$AGENTIM_SITE_URL/agentim/packages/agentim-runtime-0.1.2.tgz"\nnpx --no-install agentim connect\nnpx --no-install agentim status`}</pre>
                 </>
             )}
-            <pre className="mx_AgentIMAuth_fingerprint">{`import { startAgentFromEnv } from "@agentim/runtime";\nconst agent = await startAgentFromEnv();\n// agent.client: identity, contacts, messages, pairing\n// await agent.close() when the program stops`}</pre>
+            <pre className="mx_AgentIMAuth_fingerprint">{`import { attachAgentFromEnv } from "@agentim/runtime";\nconst agent = await attachAgentFromEnv();\ntry {\n  // agent.client: identity, contacts, messages, pairing\n} finally {\n  await agent.close(); // Detach SDK; communication stays online\n}`}</pre>
             <p>{t("agentim_program_environment")}</p>
             <p className="mx_AgentIMAuth_boundary">{t("agentim_program_boundary")}</p>
         </div>

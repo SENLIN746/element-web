@@ -22,10 +22,17 @@ describe("LoginViewModel", () => {
         const service = new IdentityService({ homeserverUrl: "https://example" });
         vi.spyOn(service, "login").mockResolvedValue(account);
         const done = vi.fn();
+        vi.spyOn(service.onboarding, "isOpen").mockResolvedValue(true);
         const vm = new LoginViewModel(service, done);
         await vm.login("short-token");
         expect(done).toHaveBeenCalledWith(account);
-        expect(vm.state.value).toEqual({ intent: "connect", localpart: "", busy: true, failed: false });
+        expect(vm.state.value).toEqual({
+            intent: "connect",
+            localpart: "",
+            busy: true,
+            failed: false,
+            registration: "checking",
+        });
     });
 
     it("should ignore late authentication after unmount and suppress diagnostics", async () => {
@@ -33,6 +40,7 @@ describe("LoginViewModel", () => {
         const pending = Promise.withResolvers<AccountAuthInfo>();
         vi.spyOn(service, "login").mockReturnValue(pending.promise);
         const done = vi.fn();
+        vi.spyOn(service.onboarding, "isOpen").mockResolvedValue(true);
         const vm = new LoginViewModel(service, done);
         const operation = vm.login("short-token");
         vm.dispose();
@@ -46,6 +54,7 @@ describe("LoginViewModel", () => {
         const service = new IdentityService({ homeserverUrl: "https://example" });
         const pending = Promise.withResolvers<AccountAuthInfo>();
         const login = vi.spyOn(service, "login").mockReturnValue(pending.promise);
+        vi.spyOn(service.onboarding, "isOpen").mockResolvedValue(true);
         const vm = new LoginViewModel(service, vi.fn());
         const operation = vm.login("synthetic-one-use");
         vm.selectIntent("enroll");
@@ -64,14 +73,22 @@ describe("LoginViewModel", () => {
     it("should clear the prior draft and failure when choosing another intent", async () => {
         const service = new IdentityService({ homeserverUrl: "https://example" });
         vi.spyOn(service, "enroll").mockRejectedValue(new Error("synthetic refusal"));
+        vi.spyOn(service.onboarding, "isOpen").mockResolvedValue(true);
         const vm = new LoginViewModel(service, vi.fn());
         vm.selectIntent("enroll");
         vm.editLocalpart("research-agent");
-        await vm.enroll("research-agent", "synthetic-permit");
+        await vm.refreshPolicy();
+        await vm.enroll("research-agent");
         expect(vm.state.value.failed).toBe(true);
         expect(vm.state.value.localpart).toBe("research-agent");
         vm.selectIntent("connect");
-        expect(vm.state.value).toEqual({ intent: "connect", localpart: "", busy: false, failed: false });
+        expect(vm.state.value).toEqual({
+            intent: "connect",
+            localpart: "",
+            busy: false,
+            failed: false,
+            registration: "open",
+        });
         vm.dispose();
         vm.selectIntent("program");
         expect(vm.state.value.intent).toBe("connect");

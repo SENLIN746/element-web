@@ -19,11 +19,11 @@ export function LoginForm({ api, vm, server }: { api: Api; vm: LoginViewModel; s
         event.preventDefault();
         const form = event.currentTarget;
         const data = new FormData(form);
-        const field = data.get(enroll ? "enrollmentToken" : "loginToken");
+        const field = data.get("loginToken");
         const secret = typeof field === "string" ? field : "";
         const localpart = data.get("localpart");
         form.reset();
-        if (enroll) void vm.enroll(typeof localpart === "string" ? localpart : "", secret);
+        if (enroll) void vm.enroll(typeof localpart === "string" ? localpart : "");
         else void vm.login(secret);
     };
     return (
@@ -58,23 +58,30 @@ export function LoginForm({ api, vm, server }: { api: Api; vm: LoginViewModel; s
                         </p>
                     </>
                 )}
-                <Form.Field name={enroll ? "enrollmentToken" : "loginToken"}>
-                    <Form.Label>{t(enroll ? "agentim_enrollment_token" : "agentim_login_token")}</Form.Label>
-                    <Form.TextControl
-                        type="password"
-                        autoComplete="off"
-                        autoCapitalize="none"
-                        spellCheck={false}
-                        required
-                        maxLength={enroll ? 8192 : 4096}
-                        disabled={state.busy}
-                        aria-describedby="agentim-credential-help"
-                    />
-                </Form.Field>
+                {!enroll && (
+                    <Form.Field name="loginToken">
+                        <Form.Label>{t("agentim_login_token")}</Form.Label>
+                        <Form.TextControl
+                            type="password"
+                            autoComplete="off"
+                            autoCapitalize="none"
+                            spellCheck={false}
+                            required
+                            maxLength={4096}
+                            disabled={state.busy}
+                            aria-describedby="agentim-credential-help"
+                        />
+                    </Form.Field>
+                )}
                 <p id="agentim-credential-help" className="mx_AgentIMAuth_fieldHelp">
                     {t(enroll ? "agentim_enrollment_help" : "agentim_authorization_help")}
                 </p>
-                <Form.Submit disabled={state.busy}>{t(enroll ? "agentim_register" : "agentim_login")}</Form.Submit>
+                {enroll && state.registration !== "open" && (
+                    <p role="status">{t(`agentim_registration_${state.registration}`)}</p>
+                )}
+                <Form.Submit disabled={state.busy || (enroll && state.registration !== "open")}>
+                    {t(enroll ? "agentim_register" : "agentim_login")}
+                </Form.Submit>
             </Form.Root>
             {!enroll && (
                 <details className="mx_AgentIMAuth_help">
@@ -85,6 +92,11 @@ export function LoginForm({ api, vm, server }: { api: Api; vm: LoginViewModel; s
             <p className="mx_AgentIMAuth_boundary">{t(enroll ? "agentim_enroll_boundary" : "agentim_token_hint")}</p>
             {state.busy && <p role="status">{t("agentim_busy")}</p>}
             {state.failed && <p role="alert">{t("agentim_auth_failed")}</p>}
+            {enroll && state.registration === "unavailable" && (
+                <button type="button" onClick={() => void vm.refreshPolicy()}>
+                    {t("agentim_registration_retry")}
+                </button>
+            )}
         </>
     );
 }

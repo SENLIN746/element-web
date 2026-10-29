@@ -1,0 +1,197 @@
+{
+    "generated_by": "scripts/checks/generate_visual_protocol.py",
+    "sources": {
+        "shared/v1/pairing/pairing-request.schema.json": "bcf9e85c0adf7f0ab6f506cc300ee885657a6428c67fb43485fd876f13e2c727",
+        "homeserver-api/v1/registration/schemas/pairing-create.schema.json": "81ce52483921e003d8ab6d3d9a4c674ae21f19c2db4e93160aa552358cfe95f3",
+        "homeserver-api/v1/registration/schemas/pairing-proof.schema.json": "c80548abd6041fbfc7a3dfe06de3cba8b4c9b1cc8a5ffc545686591bed2a10af",
+        "homeserver-api/v1/registration/schemas/pairing-token.schema.json": "6794befed78faa4f0dae5054d0cf89ee6a726fdd0699cca236db653a1155a43a"
+    },
+    "schemas": {
+        "PairingRequest": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/shared/v1/pairing/pairing-request.schema.json",
+            "title": "PairingRequest",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "pairing_id",
+                "target_user_id",
+                "user_code",
+                "code_challenge",
+                "device_name",
+                "client_origin",
+                "state",
+                "created_at_ms",
+                "expires_at_ms",
+                "server_time_ms",
+                "poll_interval_ms"
+            ],
+            "properties": {
+                "pairing_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{43}$",
+                    "minLength": 43,
+                    "maxLength": 43
+                },
+                "target_user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@[^:\\s]+:[^\\s]+$"
+                },
+                "user_code": {
+                    "type": "string",
+                    "pattern": "^[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}$",
+                    "minLength": 9,
+                    "maxLength": 9
+                },
+                "code_challenge": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{43}$",
+                    "minLength": 43,
+                    "maxLength": 43
+                },
+                "device_name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+                },
+                "client_origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
+                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval."
+                },
+                "state": {
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "approved",
+                        "rejected",
+                        "cancelled",
+                        "consuming",
+                        "consumed",
+                        "expired",
+                        "failed"
+                    ]
+                },
+                "created_at_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "expires_at_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "server_time_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "poll_interval_ms": {
+                    "type": "integer",
+                    "const": 2000
+                }
+            },
+            "x-examples": {
+                "valid": ["examples/valid/pairing-request.json", "examples/valid/pairing-request-android.json"],
+                "invalid": ["examples/invalid/pairing-request.json"]
+            }
+        },
+        "PairingCreateRequest": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-create.schema.json",
+            "title": "PairingCreateRequest",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target_user_id", "device_name", "client_origin", "code_challenge"],
+            "properties": {
+                "target_user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@[^:\\s]+:[^\\s]+$"
+                },
+                "device_name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+                },
+                "client_origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
+                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval."
+                },
+                "code_challenge": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{43}$",
+                    "minLength": 43,
+                    "maxLength": 43
+                }
+            },
+            "x-max-body-bytes": 2048,
+            "x-examples": {
+                "valid": ["../examples/valid/pairing-create.json", "../examples/valid/pairing-create-android.json"],
+                "invalid": ["../examples/invalid/pairing-create.json"]
+            }
+        },
+        "PairingProofRequest": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-proof.schema.json",
+            "title": "PairingProofRequest",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["verifier"],
+            "properties": {
+                "verifier": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{43}$",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "description": "Private browser proof. Never place it in a URL, log or Agent approval payload."
+                }
+            },
+            "x-max-body-bytes": 512,
+            "x-examples": {
+                "valid": ["../examples/valid/pairing-proof.json"],
+                "invalid": ["../examples/invalid/pairing-proof.json"]
+            }
+        },
+        "PairingTokenResponse": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-token.schema.json",
+            "title": "PairingTokenResponse",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["user_id", "login_token", "expires_in_ms"],
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@[^:\\s]+:[^\\s]+$"
+                },
+                "login_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                },
+                "expires_in_ms": {
+                    "type": "integer",
+                    "const": 60000
+                }
+            },
+            "x-examples": {
+                "valid": ["../examples/valid/pairing-token.json"],
+                "invalid": ["../examples/invalid/pairing-token.json"]
+            }
+        }
+    }
+}

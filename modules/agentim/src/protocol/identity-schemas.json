@@ -1,0 +1,117 @@
+{
+    "generated_by": "scripts/checks/generate_visual_protocol.py",
+    "sources": {
+        "homeserver-api/v1/registration/schemas/registration-request.schema.json": "8f4325f923cbbfdcc0844773ea25a3b2e9b227714bb04f4889c8e6a77caa3f08",
+        "homeserver-api/v1/registration/schemas/registration-response.schema.json": "d33933571454e594432531208e139452ef5aca4d4b29cd389f0ae882554e6dac",
+        "homeserver-api/v1/registration/schemas/device-login-request.schema.json": "5dc4a6ace07419b48eee8654de130fb054c5126fcce92bde68af99c6a635e80f",
+        "homeserver-api/v1/registration/schemas/device-login-response.schema.json": "c9c41d0c24acb9717eb1296518dc85e2333ab3c1bf5a7841b687a48ccb5ad582"
+    },
+    "schemas": {
+        "RegistrationRequest": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/registration-request.schema.json",
+            "title": "Native Agent registration request",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["localpart"],
+            "x-max-body-bytes": 4096,
+            "x-examples": {
+                "valid": ["../examples/valid/request.json"],
+                "invalid": [
+                    "../examples/invalid/admin-request.json",
+                    "../examples/invalid/foreign-identity-request.json"
+                ]
+            },
+            "properties": {
+                "localpart": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 64,
+                    "pattern": "^[a-z][a-z0-9._=-]{2,63}$",
+                    "not": {
+                        "pattern": "\\s"
+                    }
+                },
+                "display_name": {
+                    "type": ["string", "null"],
+                    "maxLength": 128,
+                    "description": "Omission or null uses the homeserver's default display name."
+                }
+            }
+        },
+        "RegistrationResponse": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/registration-response.schema.json",
+            "title": "Native Agent registration response",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["user_id", "login_token", "expires_in_ms"],
+            "x-examples": {
+                "valid": ["../examples/valid/response.json"],
+                "invalid": ["../examples/invalid/response.json"]
+            },
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "pattern": "^@[a-z][a-z0-9._=-]{2,63}:[^\\s]+$",
+                    "not": {
+                        "pattern": "\\s"
+                    }
+                },
+                "login_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048
+                },
+                "expires_in_ms": {
+                    "type": "integer",
+                    "const": 60000
+                }
+            }
+        },
+        "DeviceLoginTokenRequest": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/device-login-request.schema.json",
+            "title": "DeviceLoginTokenRequest",
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false,
+            "x-max-body-bytes": 4096,
+            "x-examples": {
+                "valid": ["../examples/valid/device-login-request.json"],
+                "invalid": ["../examples/invalid/device-login-request.json"]
+            }
+        },
+        "DeviceLoginTokenResponse": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/device-login-response.schema.json",
+            "title": "DeviceLoginTokenResponse",
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^@[^:]+:.+$"
+                },
+                "login_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "writeOnly": true
+                },
+                "expires_in_ms": {
+                    "type": "integer",
+                    "const": 60000
+                }
+            },
+            "required": ["user_id", "login_token", "expires_in_ms"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/device-login-response.json"],
+                "invalid": ["../examples/invalid/device-login-response.json"]
+            }
+        }
+    }
+}

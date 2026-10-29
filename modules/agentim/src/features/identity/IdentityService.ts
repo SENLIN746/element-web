@@ -7,26 +7,47 @@ Please see LICENSE in the repository root for full details.
 
 import type { AccountAuthInfo } from "@element-hq/element-web-module-api";
 import type { ModuleConfig } from "../../configuration/ModuleConfig";
-import { decode } from "../../protocol/validation";
+import { OnboardingService } from "./OnboardingService";
 
 /** Enroll a native identity or exchange a one-use login token for a new independent device. */
 export class IdentityService {
-    public constructor(private readonly config: ModuleConfig) {}
+    public readonly onboarding: OnboardingService;
+    public constructor(private readonly config: ModuleConfig) {
+        this.onboarding = new OnboardingService(this, config);
+    }
+
+    public async enroll(localpart: string, signal: AbortSignal): Promise<AccountAuthInfo> {
+        return this.onboarding.enroll(localpart, signal);
+    }
 
     public async post(path: string, body: unknown, signal: AbortSignal, bearer?: string): Promise<unknown> {
+        return this.request("POST", path, body, signal, bearer);
+    }
+
+    public async get(path: string, signal: AbortSignal): Promise<unknown> {
+        return this.request("GET", path, undefined, signal);
+    }
+
+    private async request(
+        method: string,
+        path: string,
+        body: unknown,
+        signal: AbortSignal,
+        bearer?: string,
+    ): Promise<unknown> {
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (bearer !== undefined) {
             if (!bearer || bearer.length > 8192 || !/^[\x21-\x7e]+$/.test(bearer))
-                throw new Error("Invalid enrollment credential");
+                throw new Error("Invalid device credential");
             headers.Authorization = `Bearer ${bearer}`;
         }
-        const serialized = JSON.stringify(body);
+        const serialized = body === undefined ? undefined : JSON.stringify(body);
         if (new TextEncoder().encode(serialized).byteLength > 8192)
             throw new Error("Identity request exceeds its byte budget");
         const endpoint = new URL(path, this.config.homeserverUrl);
         if (endpoint.origin !== this.config.homeserverUrl) throw new Error("Identity origin changed");
         const response = await fetch(endpoint, {
-            method: "POST",
+            method,
             headers,
             body: serialized,
             redirect: "error",
@@ -73,18 +94,7 @@ export class IdentityService {
         }
     }
 
-    public async enroll(localpart: string, enrollmentToken: string, signal: AbortSignal): Promise<AccountAuthInfo> {
-        const body = decode("RegistrationRequest", { localpart });
-        const registered = decode(
-            "RegistrationResponse",
-            await this.post("/_synapse/client/agentim/v1/registration", body, signal, enrollmentToken),
-        );
-        const result = await this.login(registered.login_token, signal);
-        if (result.userId !== registered.user_id) throw new Error("Agent registration identity changed");
-        return result;
-    }
-
-    public async login(token: string, signal: AbortSignal): Promise<AccountAuthInfo> {
+    public async login(token: string, signal: AbortSignal, deviceId?: string): Promise<AccountAuthInfo> {
         if (!token || token.length > 4096) throw new Error("Invalid one-use login token");
         const result = await this.post(
             "/_matrix/client/v3/login",
@@ -92,6 +102,7 @@ export class IdentityService {
                 type: "m.login.token",
                 token,
                 initial_device_display_name: "AgentIM visual client",
+                ...(deviceId ? { device_id: deviceId } : {}),
             },
             signal,
         );

@@ -35,10 +35,6 @@
         "en": "Agent ID",
         "zh-hans": "Agent ID"
     },
-    "agentim_enrollment_token": {
-        "en": "Service admission permit",
-        "zh-hans": "服务接入许可"
-    },
     "agentim_register": {
         "en": "Create identity and connect",
         "zh-hans": "创建身份并连接"
@@ -52,8 +48,8 @@
         "zh-hans": "请选择配置的 AgentIM 服务器后登录 Agent。"
     },
     "agentim_auth_failed": {
-        "en": "Agent sign-in failed. Check the credential and try again.",
-        "zh-hans": "Agent 登录失败，请检查凭证后重试。"
+        "en": "Could not finish. Keep this browser profile and Agent ID; retry in 60 seconds. An existing name cannot be claimed.",
+        "zh-hans": "暂未完成。请保留此浏览器资料与 Agent ID，60 秒后重试；不能接管已有同名身份。"
     },
     "agentim_busy": {
         "en": "Working…",

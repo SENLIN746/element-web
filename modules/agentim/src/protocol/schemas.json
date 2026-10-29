@@ -1,422 +1,252 @@
 {
     "generated_by": "scripts/checks/generate_visual_protocol.py",
     "sources": {
-        "agent-profile/v1/profile-update.schema.json": "510397f13deff29b091170a6c4c97ae81285b942b7e8f1270e617f74a51e63c2",
         "agent-profile/v1/profile.schema.json": "2f198c69eb0369a601d19350b280e60972eaeade89e475413a512ab30e089ecb",
-        "homeserver-api/v1/registration/schemas/device-login-request.schema.json": "5dc4a6ace07419b48eee8654de130fb054c5126fcce92bde68af99c6a635e80f",
-        "homeserver-api/v1/registration/schemas/device-login-response.schema.json": "c9c41d0c24acb9717eb1296518dc85e2333ab3c1bf5a7841b687a48ccb5ad582",
-        "homeserver-api/v1/registration/schemas/pairing-create.schema.json": "81ce52483921e003d8ab6d3d9a4c674ae21f19c2db4e93160aa552358cfe95f3",
-        "homeserver-api/v1/registration/schemas/pairing-proof.schema.json": "c80548abd6041fbfc7a3dfe06de3cba8b4c9b1cc8a5ffc545686591bed2a10af",
-        "homeserver-api/v1/registration/schemas/pairing-token.schema.json": "6794befed78faa4f0dae5054d0cf89ee6a726fdd0699cca236db653a1155a43a",
-        "homeserver-api/v1/registration/schemas/registration-request.schema.json": "8f4325f923cbbfdcc0844773ea25a3b2e9b227714bb04f4889c8e6a77caa3f08",
-        "homeserver-api/v1/registration/schemas/registration-response.schema.json": "d33933571454e594432531208e139452ef5aca4d4b29cd389f0ae882554e6dac",
-        "shared/v1/contacts/contact-action.schema.json": "c28f1ef5719982b7b727c225318054f9619b2c355e2c72109d1dbdcfcf1f25f0",
-        "shared/v1/contacts/contact-page.schema.json": "9634721bf0de74a635960aab184dc5410dbd046789138326fd58905438a10d50",
-        "shared/v1/contacts/contact.schema.json": "9dfdcd1735c6864570deff7d9ba7bbfc9618279783c4e8bc470c0d40a05de317",
+        "agent-profile/v1/profile-update.schema.json": "510397f13deff29b091170a6c4c97ae81285b942b7e8f1270e617f74a51e63c2",
         "shared/v1/discovery/profile-page.schema.json": "b9f1bd2dc175ba33bb264472a153403bc315e58f586fc27bbdc138deefd1ed81",
-        "shared/v1/pairing/pairing-request.schema.json": "bcf9e85c0adf7f0ab6f506cc300ee885657a6428c67fb43485fd876f13e2c727"
+        "shared/v1/contacts/contact.schema.json": "9dfdcd1735c6864570deff7d9ba7bbfc9618279783c4e8bc470c0d40a05de317",
+        "shared/v1/contacts/contact-page.schema.json": "9634721bf0de74a635960aab184dc5410dbd046789138326fd58905438a10d50",
+        "shared/v1/contacts/contact-action.schema.json": "c28f1ef5719982b7b727c225318054f9619b2c355e2c72109d1dbdcfcf1f25f0"
     },
     "schemas": {
-        "PairingRequest": {
-            "$id": "https://agentim.local/contracts/shared/v1/pairing/pairing-request.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "client_origin": {
-                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval.",
-                    "maxLength": 255,
-                    "minLength": 1,
-                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
-                    "type": "string"
-                },
-                "code_challenge": {
-                    "maxLength": 43,
-                    "minLength": 43,
-                    "pattern": "^[A-Za-z0-9_-]{43}$",
-                    "type": "string"
-                },
-                "created_at_ms": { "maximum": 9007199254740991, "minimum": 0, "type": "integer" },
-                "device_name": {
-                    "maxLength": 80,
-                    "minLength": 1,
-                    "pattern": "^[^\\u0000-\\u001f\\u007f]+$",
-                    "type": "string"
-                },
-                "expires_at_ms": { "maximum": 9007199254740991, "minimum": 0, "type": "integer" },
-                "pairing_id": { "maxLength": 43, "minLength": 43, "pattern": "^[A-Za-z0-9_-]{43}$", "type": "string" },
-                "poll_interval_ms": { "const": 2000, "type": "integer" },
-                "server_time_ms": { "maximum": 9007199254740991, "minimum": 0, "type": "integer" },
-                "state": {
-                    "enum": [
-                        "pending",
-                        "approved",
-                        "rejected",
-                        "cancelled",
-                        "consuming",
-                        "consumed",
-                        "expired",
-                        "failed"
-                    ],
-                    "type": "string"
-                },
-                "target_user_id": {
-                    "maxLength": 255,
-                    "minLength": 4,
-                    "pattern": "^@[^:\\s]+:[^\\s]+$",
-                    "type": "string"
-                },
-                "user_code": {
-                    "maxLength": 9,
-                    "minLength": 9,
-                    "pattern": "^[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}$",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "pairing_id",
-                "target_user_id",
-                "user_code",
-                "code_challenge",
-                "device_name",
-                "client_origin",
-                "state",
-                "created_at_ms",
-                "expires_at_ms",
-                "server_time_ms",
-                "poll_interval_ms"
-            ],
-            "title": "PairingRequest",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["examples/invalid/pairing-request.json"],
-                "valid": ["examples/valid/pairing-request.json", "examples/valid/pairing-request-android.json"]
-            }
-        },
-        "PairingCreateRequest": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-create.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "client_origin": {
-                    "description": "Applicant-declared origin or explicit native client label; never sufficient authority for approval.",
-                    "maxLength": 255,
-                    "minLength": 1,
-                    "pattern": "^(https?://[^/?#@\\s]+|vector://vector|android-app://im\\.agentim\\.android)$",
-                    "type": "string"
-                },
-                "code_challenge": {
-                    "maxLength": 43,
-                    "minLength": 43,
-                    "pattern": "^[A-Za-z0-9_-]{43}$",
-                    "type": "string"
-                },
-                "device_name": {
-                    "maxLength": 80,
-                    "minLength": 1,
-                    "pattern": "^[^\\u0000-\\u001f\\u007f]+$",
-                    "type": "string"
-                },
-                "target_user_id": {
-                    "maxLength": 255,
-                    "minLength": 4,
-                    "pattern": "^@[^:\\s]+:[^\\s]+$",
-                    "type": "string"
-                }
-            },
-            "required": ["target_user_id", "device_name", "client_origin", "code_challenge"],
-            "title": "PairingCreateRequest",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["../examples/invalid/pairing-create.json"],
-                "valid": ["../examples/valid/pairing-create.json", "../examples/valid/pairing-create-android.json"]
-            },
-            "x-max-body-bytes": 2048
-        },
-        "PairingProofRequest": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-proof.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "verifier": {
-                    "description": "Private browser proof. Never place it in a URL, log or Agent approval payload.",
-                    "maxLength": 43,
-                    "minLength": 43,
-                    "pattern": "^[A-Za-z0-9_-]{43}$",
-                    "type": "string"
-                }
-            },
-            "required": ["verifier"],
-            "title": "PairingProofRequest",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["../examples/invalid/pairing-proof.json"],
-                "valid": ["../examples/valid/pairing-proof.json"]
-            },
-            "x-max-body-bytes": 512
-        },
-        "PairingTokenResponse": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/pairing-token.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "expires_in_ms": { "const": 60000, "type": "integer" },
-                "login_token": { "maxLength": 4096, "minLength": 1, "type": "string" },
-                "user_id": { "maxLength": 255, "minLength": 4, "pattern": "^@[^:\\s]+:[^\\s]+$", "type": "string" }
-            },
-            "required": ["user_id", "login_token", "expires_in_ms"],
-            "title": "PairingTokenResponse",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["../examples/invalid/pairing-token.json"],
-                "valid": ["../examples/valid/pairing-token.json"]
-            }
-        },
         "AgentProfile": {
-            "$id": "https://agentim.local/contracts/agent-profile/v1/profile.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "capabilities": {
-                    "items": { "maxLength": 64, "minLength": 1, "type": "string" },
-                    "maxItems": 32,
-                    "type": "array",
-                    "uniqueItems": true
-                },
-                "contact_policy": { "enum": ["request", "closed"], "type": "string" },
-                "description": { "maxLength": 2000, "type": "string" },
-                "discoverable": { "type": "boolean" },
-                "user_id": { "maxLength": 255, "minLength": 1, "pattern": "^@[^:]+:.+$", "type": "string" }
-            },
-            "required": ["user_id", "description", "capabilities", "discoverable", "contact_policy"],
+            "$id": "https://agentim.local/contracts/agent-profile/v1/profile.schema.json",
             "title": "AgentProfile",
             "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^@[^:]+:.+$"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "capabilities": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                    },
+                    "maxItems": 32,
+                    "uniqueItems": true
+                },
+                "discoverable": {
+                    "type": "boolean"
+                },
+                "contact_policy": {
+                    "type": "string",
+                    "enum": ["request", "closed"]
+                }
+            },
+            "required": ["user_id", "description", "capabilities", "discoverable", "contact_policy"],
+            "additionalProperties": false,
             "x-examples": {
-                "invalid": ["examples/invalid/profile.json", "examples/invalid/profile-2.json"],
-                "valid": ["examples/valid/profile.json"]
+                "valid": ["examples/valid/profile.json"],
+                "invalid": ["examples/invalid/profile.json", "examples/invalid/profile-2.json"]
             }
         },
         "ProfileUpdate": {
-            "$id": "https://agentim.local/contracts/agent-profile/v1/profile-update.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "capabilities": {
-                    "items": { "maxLength": 64, "minLength": 1, "type": "string" },
-                    "maxItems": 32,
-                    "type": "array",
-                    "uniqueItems": true
-                },
-                "contact_policy": { "enum": ["request", "closed"], "type": "string" },
-                "description": { "maxLength": 2000, "type": "string" },
-                "discoverable": { "type": "boolean" }
-            },
-            "required": ["description", "capabilities", "discoverable", "contact_policy"],
+            "$id": "https://agentim.local/contracts/agent-profile/v1/profile-update.schema.json",
             "title": "ProfileUpdate",
             "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "capabilities": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                    },
+                    "maxItems": 32,
+                    "uniqueItems": true
+                },
+                "discoverable": {
+                    "type": "boolean"
+                },
+                "contact_policy": {
+                    "type": "string",
+                    "enum": ["request", "closed"]
+                }
+            },
+            "required": ["description", "capabilities", "discoverable", "contact_policy"],
+            "additionalProperties": false,
             "x-examples": {
+                "valid": ["examples/valid/profile-update.json"],
                 "invalid": [
                     "examples/invalid/profile-update.json",
                     "examples/invalid/profile-update-2.json",
                     "examples/invalid/profile-update-3.json"
-                ],
-                "valid": ["examples/valid/profile-update.json"]
+                ]
             },
             "x-max-body-bytes": 32768
         },
         "ProfilePage": {
-            "$id": "https://agentim.local/contracts/shared/v1/discovery/profile-page.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
+            "$id": "https://agentim.local/contracts/shared/v1/discovery/profile-page.schema.json",
+            "title": "ProfilePage",
+            "type": "object",
             "properties": {
-                "next_cursor": { "maxLength": 255, "minLength": 1, "type": ["string", "null"] },
                 "profiles": {
+                    "type": "array",
                     "items": {
-                        "$id": "https://agentim.local/contracts/agent-profile/v1/profile.schema.json",
                         "$schema": "https://json-schema.org/draft/2020-12/schema",
-                        "additionalProperties": false,
-                        "properties": {
-                            "capabilities": {
-                                "items": { "maxLength": 64, "minLength": 1, "type": "string" },
-                                "maxItems": 32,
-                                "type": "array",
-                                "uniqueItems": true
-                            },
-                            "contact_policy": { "enum": ["request", "closed"], "type": "string" },
-                            "description": { "maxLength": 2000, "type": "string" },
-                            "discoverable": { "type": "boolean" },
-                            "user_id": { "maxLength": 255, "minLength": 1, "pattern": "^@[^:]+:.+$", "type": "string" }
-                        },
-                        "required": ["user_id", "description", "capabilities", "discoverable", "contact_policy"],
+                        "$id": "https://agentim.local/contracts/agent-profile/v1/profile.schema.json",
                         "title": "AgentProfile",
                         "type": "object",
+                        "properties": {
+                            "user_id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255,
+                                "pattern": "^@[^:]+:.+$"
+                            },
+                            "description": {
+                                "type": "string",
+                                "maxLength": 2000
+                            },
+                            "capabilities": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 64
+                                },
+                                "maxItems": 32,
+                                "uniqueItems": true
+                            },
+                            "discoverable": {
+                                "type": "boolean"
+                            },
+                            "contact_policy": {
+                                "type": "string",
+                                "enum": ["request", "closed"]
+                            }
+                        },
+                        "required": ["user_id", "description", "capabilities", "discoverable", "contact_policy"],
+                        "additionalProperties": false,
                         "x-examples": {
-                            "invalid": ["examples/invalid/profile.json", "examples/invalid/profile-2.json"],
-                            "valid": ["examples/valid/profile.json"]
+                            "valid": ["examples/valid/profile.json"],
+                            "invalid": ["examples/invalid/profile.json", "examples/invalid/profile-2.json"]
                         }
                     },
-                    "maxItems": 200,
-                    "type": "array"
+                    "maxItems": 200
+                },
+                "next_cursor": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "maxLength": 255
                 }
             },
             "required": ["profiles", "next_cursor"],
-            "title": "ProfilePage",
-            "type": "object",
+            "additionalProperties": false,
             "x-examples": {
-                "invalid": ["examples/invalid/profile-page.json", "examples/invalid/profile-page-2.json"],
-                "valid": ["examples/valid/profile-page.json"]
+                "valid": ["examples/valid/profile-page.json"],
+                "invalid": ["examples/invalid/profile-page.json", "examples/invalid/profile-page-2.json"]
             }
         },
         "Contact": {
-            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "blocked": { "type": "boolean" },
-                "state": { "enum": ["none", "outgoing", "incoming", "accepted", "rejected"], "type": "string" },
-                "user_id": { "maxLength": 255, "minLength": 1, "pattern": "^@[^:]+:.+$", "type": "string" }
-            },
-            "required": ["user_id", "state", "blocked"],
+            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact.schema.json",
             "title": "Contact",
             "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "pattern": "^@[^:]+:.+$"
+                },
+                "state": {
+                    "type": "string",
+                    "enum": ["none", "outgoing", "incoming", "accepted", "rejected"]
+                },
+                "blocked": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["user_id", "state", "blocked"],
+            "additionalProperties": false,
             "x-examples": {
-                "invalid": ["examples/invalid/contact.json", "examples/invalid/contact-2.json"],
-                "valid": ["examples/valid/contact.json"]
+                "valid": ["examples/valid/contact.json"],
+                "invalid": ["examples/invalid/contact.json", "examples/invalid/contact-2.json"]
             }
         },
         "ContactPage": {
-            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact-page.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "contacts": {
-                    "items": {
-                        "$id": "https://agentim.local/contracts/shared/v1/contacts/contact.schema.json",
-                        "$schema": "https://json-schema.org/draft/2020-12/schema",
-                        "additionalProperties": false,
-                        "properties": {
-                            "blocked": { "type": "boolean" },
-                            "state": {
-                                "enum": ["none", "outgoing", "incoming", "accepted", "rejected"],
-                                "type": "string"
-                            },
-                            "user_id": { "maxLength": 255, "minLength": 1, "pattern": "^@[^:]+:.+$", "type": "string" }
-                        },
-                        "required": ["user_id", "state", "blocked"],
-                        "title": "Contact",
-                        "type": "object",
-                        "x-examples": {
-                            "invalid": ["examples/invalid/contact.json", "examples/invalid/contact-2.json"],
-                            "valid": ["examples/valid/contact.json"]
-                        }
-                    },
-                    "maxItems": 200,
-                    "type": "array"
-                },
-                "next_cursor": { "maxLength": 255, "minLength": 1, "type": ["string", "null"] }
-            },
-            "required": ["contacts", "next_cursor"],
+            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact-page.schema.json",
             "title": "ContactPage",
             "type": "object",
+            "properties": {
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "$schema": "https://json-schema.org/draft/2020-12/schema",
+                        "$id": "https://agentim.local/contracts/shared/v1/contacts/contact.schema.json",
+                        "title": "Contact",
+                        "type": "object",
+                        "properties": {
+                            "user_id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255,
+                                "pattern": "^@[^:]+:.+$"
+                            },
+                            "state": {
+                                "type": "string",
+                                "enum": ["none", "outgoing", "incoming", "accepted", "rejected"]
+                            },
+                            "blocked": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": ["user_id", "state", "blocked"],
+                        "additionalProperties": false,
+                        "x-examples": {
+                            "valid": ["examples/valid/contact.json"],
+                            "invalid": ["examples/invalid/contact.json", "examples/invalid/contact-2.json"]
+                        }
+                    },
+                    "maxItems": 200
+                },
+                "next_cursor": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "maxLength": 255
+                }
+            },
+            "required": ["contacts", "next_cursor"],
+            "additionalProperties": false,
             "x-examples": {
-                "invalid": ["examples/invalid/contact-page.json", "examples/invalid/contact-page-2.json"],
-                "valid": ["examples/valid/contact-page.json"]
+                "valid": ["examples/valid/contact-page.json"],
+                "invalid": ["examples/invalid/contact-page.json", "examples/invalid/contact-page-2.json"]
             }
         },
         "ContactActionRequest": {
-            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact-action.schema.json",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "action": { "enum": ["request", "accept", "reject", "remove", "block", "unblock"], "type": "string" }
-            },
-            "required": ["action"],
+            "$id": "https://agentim.local/contracts/shared/v1/contacts/contact-action.schema.json",
             "title": "ContactAction",
             "type": "object",
-            "x-examples": {
-                "invalid": ["examples/invalid/contact-action.json", "examples/invalid/contact-action-2.json"],
-                "valid": ["examples/valid/contact-action.json"]
-            }
-        },
-        "RegistrationRequest": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/registration-request.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
             "properties": {
-                "display_name": {
-                    "description": "Omission or null uses the homeserver's default display name.",
-                    "maxLength": 128,
-                    "type": ["string", "null"]
-                },
-                "localpart": {
-                    "maxLength": 64,
-                    "minLength": 3,
-                    "not": { "pattern": "\\s" },
-                    "pattern": "^[a-z][a-z0-9._=-]{2,63}$",
-                    "type": "string"
+                "action": {
+                    "type": "string",
+                    "enum": ["request", "accept", "reject", "remove", "block", "unblock"]
                 }
             },
-            "required": ["localpart"],
-            "title": "Native Agent registration request",
-            "type": "object",
-            "x-examples": {
-                "invalid": [
-                    "../examples/invalid/admin-request.json",
-                    "../examples/invalid/foreign-identity-request.json"
-                ],
-                "valid": ["../examples/valid/request.json"]
-            },
-            "x-max-body-bytes": 4096
-        },
-        "RegistrationResponse": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/registration-response.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "required": ["action"],
             "additionalProperties": false,
-            "properties": {
-                "expires_in_ms": { "const": 60000, "type": "integer" },
-                "login_token": { "maxLength": 2048, "minLength": 1, "type": "string" },
-                "user_id": {
-                    "not": { "pattern": "\\s" },
-                    "pattern": "^@[a-z][a-z0-9._=-]{2,63}:[^\\s]+$",
-                    "type": "string"
-                }
-            },
-            "required": ["user_id", "login_token", "expires_in_ms"],
-            "title": "Native Agent registration response",
-            "type": "object",
             "x-examples": {
-                "invalid": ["../examples/invalid/response.json"],
-                "valid": ["../examples/valid/response.json"]
-            }
-        },
-        "DeviceLoginTokenRequest": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/device-login-request.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {},
-            "required": [],
-            "title": "DeviceLoginTokenRequest",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["../examples/invalid/device-login-request.json"],
-                "valid": ["../examples/valid/device-login-request.json"]
-            },
-            "x-max-body-bytes": 4096
-        },
-        "DeviceLoginTokenResponse": {
-            "$id": "https://agentim.local/contracts/homeserver-api/v1/registration/schemas/device-login-response.schema.json",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "additionalProperties": false,
-            "properties": {
-                "expires_in_ms": { "const": 60000, "type": "integer" },
-                "login_token": { "maxLength": 4096, "minLength": 1, "type": "string", "writeOnly": true },
-                "user_id": { "maxLength": 255, "minLength": 1, "pattern": "^@[^:]+:.+$", "type": "string" }
-            },
-            "required": ["user_id", "login_token", "expires_in_ms"],
-            "title": "DeviceLoginTokenResponse",
-            "type": "object",
-            "x-examples": {
-                "invalid": ["../examples/invalid/device-login-response.json"],
-                "valid": ["../examples/valid/device-login-response.json"]
+                "valid": ["examples/valid/contact-action.json"],
+                "invalid": ["examples/invalid/contact-action.json", "examples/invalid/contact-action-2.json"]
             }
         }
     }

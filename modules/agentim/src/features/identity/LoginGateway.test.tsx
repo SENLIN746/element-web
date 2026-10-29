@@ -9,6 +9,8 @@ import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Api } from "@element-hq/element-web-module-api";
+import { IdentityService } from "./IdentityService";
+import { OnboardingService } from "./OnboardingService";
 import { LoginGateway } from "./LoginGateway";
 
 const config = { homeserverUrl: "https://agents.example", serverName: "matrix.example" };
@@ -21,6 +23,7 @@ describe("Agent-native entry", () => {
     beforeEach(() => {
         vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
         vi.stubGlobal("fetch", vi.fn());
+        vi.spyOn(OnboardingService.prototype, "isOpen").mockResolvedValue(true);
         container = document.createElement("div");
         document.body.append(container);
         root = createRoot(container);
@@ -30,6 +33,7 @@ describe("Agent-native entry", () => {
         await act(async () => root.unmount());
         container.remove();
         vi.unstubAllGlobals();
+        vi.restoreAllMocks();
     });
 
     async function render(hsUrl = config.homeserverUrl, done = vi.fn(), changeServer = vi.fn()): Promise<void> {
@@ -102,7 +106,7 @@ describe("Agent-native entry", () => {
         await click("agentim_intent_program");
         expect(container.querySelector("form")).toBeNull();
         expect(container.textContent).toContain("AGENTIM_SITE_URL");
-        expect(container.textContent).toContain("agentim-runtime-0.1.1.tgz");
+        expect(container.textContent).toContain("agentim-runtime-0.1.2.tgz");
         expect(container.textContent).not.toContain("agentim-runtime-0.1.0.tgz");
         expect(container.textContent).toContain("agentim_program_skill");
         expect(fetch).not.toHaveBeenCalled();
@@ -118,41 +122,23 @@ describe("Agent-native entry", () => {
         expect(fetch).not.toHaveBeenCalled();
     });
 
-    it("should register a new identity then connect its independent device and clear the permit", async () => {
+    it("should submit only the Agent ID with no permit field", async () => {
         const done = vi.fn();
-        vi.mocked(fetch)
-            .mockResolvedValueOnce(
-                new Response(
-                    JSON.stringify({
-                        user_id: "@research-agent:matrix.example",
-                        login_token: "synthetic-login",
-                        expires_in_ms: 60000,
-                    }),
-                    { headers: { "content-type": "application/json" } },
-                ),
-            )
-            .mockResolvedValueOnce(
-                new Response(
-                    JSON.stringify({
-                        user_id: "@research-agent:matrix.example",
-                        device_id: "INDEPENDENT",
-                        access_token: "synthetic-device",
-                    }),
-                    { headers: { "content-type": "application/json" } },
-                ),
-            );
+        const enroll = vi.spyOn(IdentityService.prototype, "enroll").mockResolvedValue({
+            userId: "@research-agent:matrix.example",
+            deviceId: "INDEPENDENT",
+            accessToken: "synthetic-device",
+            homeserverUrl: config.homeserverUrl,
+        });
         await render(config.homeserverUrl, done);
         await click("agentim_intent_enroll");
+        expect(container.querySelector('input[name="enrollmentToken"]')).toBeNull();
         container.querySelector<HTMLInputElement>('input[name="localpart"]')!.value = "research-agent";
-        const permit = container.querySelector<HTMLInputElement>('input[name="enrollmentToken"]')!;
-        permit.value = "synthetic-admission";
         await act(async () =>
             container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })),
         );
-        expect(done).toHaveBeenCalledWith(
-            expect.objectContaining({ userId: "@research-agent:matrix.example", deviceId: "INDEPENDENT" }),
-        );
-        expect(permit.value).toBe("");
-        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(enroll).toHaveBeenCalledWith("research-agent", expect.any(AbortSignal));
+        expect(done).toHaveBeenCalledWith(expect.objectContaining({ userId: "@research-agent:matrix.example" }));
+        expect(fetch).not.toHaveBeenCalled();
     });
 });

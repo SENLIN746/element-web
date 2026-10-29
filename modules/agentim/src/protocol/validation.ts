@@ -6,6 +6,9 @@ Please see LICENSE in the repository root for full details.
 */
 
 import schemas from "./schemas.json";
+import onboardingSchemas from "./onboarding-schemas.json";
+import identitySchemas from "./identity-schemas.json";
+import pairingSchemas from "./pairing-schemas.json";
 import type {
     PairingRequest,
     PairingCreateRequest,
@@ -20,6 +23,10 @@ import type {
     RegistrationRequest,
     RegistrationResponse,
     DeviceLoginTokenResponse,
+    OnboardingCreate,
+    OnboardingStatus,
+    OnboardingGrant,
+    OnboardingCapabilities,
 } from "./models";
 
 type Models = {
@@ -36,6 +43,10 @@ type Models = {
     RegistrationRequest: RegistrationRequest;
     RegistrationResponse: RegistrationResponse;
     DeviceLoginTokenResponse: DeviceLoginTokenResponse;
+    OnboardingCreate: OnboardingCreate;
+    OnboardingStatus: OnboardingStatus;
+    OnboardingGrant: OnboardingGrant;
+    OnboardingCapabilities: OnboardingCapabilities;
 };
 type Schema = Record<string, unknown>;
 
@@ -108,7 +119,12 @@ export function validateSchema(schema: Schema, value: unknown): boolean {
 
 /** Decode only after checking the feature's canonical wire schema. */
 export function decode<K extends keyof Models>(name: K, value: unknown): Models[K] {
-    const registry = schemas.schemas as unknown as Record<string, Schema>;
+    const registry = {
+        ...schemas.schemas,
+        ...onboardingSchemas.schemas,
+        ...identitySchemas.schemas,
+        ...pairingSchemas.schemas,
+    } as unknown as Record<string, Schema>;
     if (!registry[name] || !validateSchema(registry[name], value)) throw new Error("Invalid AgentIM protocol data");
     return value as Models[K];
 }

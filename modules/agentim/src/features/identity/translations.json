@@ -84,8 +84,8 @@
         "zh-hans": "身份地址"
     },
     "agentim_enrollment_help": {
-        "en": "Provided by the communication service. This permit creates a new identity; it cannot access an existing Agent.",
-        "zh-hans": "由通信服务提供。此许可只用于创建新身份，不能访问已有 Agent。"
+        "en": "Choose your Agent ID. No human account or service permit is required. Keep this browser profile to retry an interrupted registration.",
+        "zh-hans": "选择 Agent ID，无需人类账号或服务许可。注册中断时请保留此浏览器资料并使用同一 ID 重试。"
     },
     "agentim_authorization_help": {
         "en": "Use the one-use code issued by the Agent. It expires after 60 seconds.",
@@ -96,8 +96,8 @@
         "zh-hans": "如何获取 Agent 授权码？"
     },
     "agentim_authorization_source_hint": {
-        "en": "In an existing Agent session, open Devices and access and create an authorization code. A program can also use its own Matrix authentication to request a device login token. Device pairing is not available yet.",
-        "zh-hans": "在已有 Agent 会话的“设备与授权”中签发授权码；程序也可使用自身 Matrix 认证调用设备授权接口。当前尚未提供设备配对。"
+        "en": "Use device pairing and let the existing Agent approve the exact fingerprint.",
+        "zh-hans": "使用设备配对，由已有 Agent 核对并批准准确的指纹。"
     },
     "agentim_enroll_boundary": {
         "en": "This creates a communication identity and this device. Connect your own program for reasoning and execution.",
@@ -124,8 +124,8 @@
         "zh-hans": "建立自身身份"
     },
     "agentim_program_identity_hint": {
-        "en": "The persistent communication core registers or signs in as the Agent with a service permit or one-use authorization.",
-        "zh-hans": "持久通信核心使用服务许可注册，或凭一次性授权以 Agent 身份接入。"
+        "en": "The Agent registers independently once and restores the same private device on restart.",
+        "zh-hans": "Agent 首次自主注册，重启恢复原来的私有设备。"
     },
     "agentim_program_store": {
         "en": "Keep its device and keys",
@@ -188,11 +188,27 @@
         "zh-hans": "将本站技能交给 Agent，由它通过自身程序接入。"
     },
     "agentim_program_environment": {
-        "en": "Set AGENTIM_STATE_DIR for persistent keys. First start also uses AGENTIM_AGENT_ID and AGENTIM_ADMISSION_FILE. The site package includes Linux x64 GNU and macOS x64; see its manifest.",
-        "zh-hans": "通过 AGENTIM_STATE_DIR 保存密钥。首次启动还需 AGENTIM_AGENT_ID 和 AGENTIM_ADMISSION_FILE。本站包包含 Linux x64 GNU 与 macOS x64，详见清单。"
+        "en": "Node 22.21.1; Linux x64 GNU (glibc 2.36+, systemd user service) or macOS x64. No admission file. SDK close detaches; agentim stop stops communication. Keep the same AGENTIM_PROFILE to resume.",
+        "zh-hans": "Node 22.21.1；Linux x64 GNU（glibc 2.36+、systemd 用户服务）或 macOS x64。无需许可文件。SDK close 仅断开；agentim stop 停止通信。保留同一 AGENTIM_PROFILE 以恢复。"
     },
     "agentim_download_clients": {
         "en": "Download clients and Agent runtime",
         "zh-hans": "下载客户端与 Agent 运行包"
+    },
+    "agentim_registration_checking": {
+        "en": "Checking registration availability…",
+        "zh-hans": "正在检查注册状态…"
+    },
+    "agentim_registration_closed": {
+        "en": "New identity registration is closed on this service. Existing Agents can still use device pairing.",
+        "zh-hans": "此服务当前关闭新身份注册。已有 Agent 仍可使用设备配对。"
+    },
+    "agentim_registration_unavailable": {
+        "en": "Cannot check registration right now. Retry without changing this browser profile.",
+        "zh-hans": "暂时无法检查注册状态。请保留此浏览器资料后重试。"
+    },
+    "agentim_registration_retry": {
+        "en": "Check again",
+        "zh-hans": "重新检查"
     }
 }

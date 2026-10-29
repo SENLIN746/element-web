@@ -1,0 +1,184 @@
+{
+    "generated_by": "scripts/checks/generate_visual_protocol.py",
+    "sources": {
+        "homeserver-api/v2/registration/schemas/onboarding-create.schema.json": "b304dd11e80b3c06d67628af071ab8f2fe2d7bdbdcadeae92136bea379bc5b4c",
+        "homeserver-api/v2/registration/schemas/onboarding-status.schema.json": "a5be308bcc19da258c5ea28163ddd69c293c5e7ec27f26d4ba8ed44297ce84df",
+        "homeserver-api/v2/registration/schemas/onboarding-grant.schema.json": "79350514976371a96697fc9b2d9d0064952680bba024f9ab2897e24d0f321470",
+        "homeserver-api/v2/registration/schemas/onboarding-capabilities.schema.json": "72f6c7c2f41d43bd9cdbd2d173c338353cb36c8a02859fe287e372b106ebe5aa"
+    },
+    "schemas": {
+        "OnboardingCreate": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/registration/schemas/onboarding-create.schema.json",
+            "title": "OnboardingCreate",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "attempt_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "device_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "code_challenge": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "localpart": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 64,
+                    "pattern": "^[a-z][a-z0-9._=-]{2,63}$"
+                },
+                "display_name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+                }
+            },
+            "required": ["attempt_id", "device_id", "code_challenge", "localpart"],
+            "x-max-body-bytes": 2048,
+            "x-examples": {
+                "valid": ["../examples/valid/onboarding-create.json"],
+                "invalid": ["../examples/invalid/onboarding-create.json"]
+            }
+        },
+        "OnboardingStatus": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/registration/schemas/onboarding-status.schema.json",
+            "title": "OnboardingStatus",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "attempt_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "device_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "expires_at_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "state": {
+                    "type": "string",
+                    "enum": ["reserved", "provisioned", "completed"]
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@[^:\\s]+:[^\\s]+$"
+                }
+            },
+            "required": ["attempt_id", "device_id", "expires_at_ms", "state"],
+            "x-examples": {
+                "valid": ["../examples/valid/onboarding-status.json"],
+                "invalid": ["../examples/invalid/onboarding-status.json"]
+            }
+        },
+        "OnboardingGrant": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/registration/schemas/onboarding-grant.schema.json",
+            "title": "OnboardingGrant",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "attempt_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "device_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "expires_at_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "state": {
+                    "type": "string",
+                    "enum": ["reserved", "provisioned", "completed"]
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@[^:\\s]+:[^\\s]+$"
+                },
+                "login_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024,
+                    "writeOnly": true
+                },
+                "expires_in_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60000
+                }
+            },
+            "required": [
+                "attempt_id",
+                "device_id",
+                "expires_at_ms",
+                "state",
+                "user_id",
+                "login_token",
+                "expires_in_ms"
+            ],
+            "x-examples": {
+                "valid": ["../examples/valid/onboarding-grant.json"],
+                "invalid": ["../examples/invalid/onboarding-grant.json"]
+            }
+        },
+        "OnboardingCapabilities": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/registration/schemas/onboarding-capabilities.schema.json",
+            "title": "OnboardingCapabilities",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "mode": {
+                    "type": "string",
+                    "enum": ["open", "closed"]
+                },
+                "protocol": {
+                    "type": "integer",
+                    "const": 2
+                },
+                "attempt_lifetime_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                }
+            },
+            "required": ["mode", "protocol", "attempt_lifetime_ms"],
+            "x-examples": {
+                "valid": ["../examples/valid/onboarding-capabilities.json"],
+                "invalid": ["../examples/invalid/onboarding-capabilities.json"]
+            }
+        }
+    }
+}

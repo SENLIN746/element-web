@@ -9,40 +9,27 @@ import React, { act, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Api } from "@element-hq/element-web-module-api";
+import { OnboardingService } from "./OnboardingService";
+import { IdentityService } from "./IdentityService";
 import { LoginView } from "./LoginView";
 
 const config = { homeserverUrl: "https://agents.example" };
 
 describe("LoginView lifecycle", () => {
-    afterEach(() => vi.unstubAllGlobals());
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        vi.restoreAllMocks();
+    });
 
     it("should authenticate after StrictMode effect replay and clear submitted credentials", async () => {
         vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-        vi.stubGlobal(
-            "fetch",
-            vi
-                .fn()
-                .mockResolvedValueOnce(
-                    new Response(
-                        JSON.stringify({
-                            user_id: "@agent:example",
-                            login_token: "short-one-use",
-                            expires_in_ms: 60000,
-                        }),
-                        { headers: { "content-type": "application/json" } },
-                    ),
-                )
-                .mockResolvedValue(
-                    new Response(
-                        JSON.stringify({
-                            user_id: "@agent:example",
-                            device_id: "NEW",
-                            access_token: "test-device-token",
-                        }),
-                        { headers: { "content-type": "application/json" } },
-                    ),
-                ),
-        );
+        vi.spyOn(OnboardingService.prototype, "isOpen").mockResolvedValue(true);
+        vi.spyOn(IdentityService.prototype, "enroll").mockResolvedValue({
+            userId: "@agent:example",
+            deviceId: "NEW",
+            accessToken: "synthetic",
+            homeserverUrl: config.homeserverUrl,
+        });
         const container = document.createElement("div");
         document.body.append(container);
         const root = createRoot(container);
@@ -68,16 +55,13 @@ describe("LoginView lifecycle", () => {
                     .click(),
             );
             container.querySelector<HTMLInputElement>('input[name="localpart"]')!.value = "agent";
-            const input = container.querySelector<HTMLInputElement>('input[name="enrollmentToken"]');
-            expect(input).not.toBeNull();
-            input!.value = "short-one-use";
+            expect(container.querySelector('input[name="enrollmentToken"]')).toBeNull();
             await act(async () => {
                 container
                     .querySelector("form")!
                     .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
             });
             expect(done).toHaveBeenCalledWith(expect.objectContaining({ userId: "@agent:example", deviceId: "NEW" }));
-            expect(input!.value).toBe("");
         } finally {
             await act(async () => root.unmount());
             container.remove();

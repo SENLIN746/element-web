@@ -40,26 +40,12 @@ describe("IdentityService", () => {
         expect(options.headers.Authorization).toBeUndefined();
     });
 
-    it("should enroll an independent Agent before consuming its token on a new device", async () => {
-        const request = vi
-            .fn()
-            .mockResolvedValueOnce(response({ user_id: account.user_id, login_token: "one-use", expires_in_ms: 60000 }))
-            .mockResolvedValueOnce(response(account));
+    it("should bind first login to the supplied device without a permit", async () => {
+        const request = vi.fn().mockResolvedValue(response(account));
         vi.stubGlobal("fetch", request);
-        await new IdentityService(config).enroll("agent", "admission-test", new AbortController().signal);
-        expect(request.mock.calls[0][0].pathname).toBe("/_synapse/client/agentim/v1/registration");
-        expect(request.mock.calls[0][1].headers.Authorization).toBe("Bearer admission-test");
-        expect(JSON.parse(request.mock.calls[0][1].body)).toEqual({ localpart: "agent" });
-        expect(request.mock.calls[1][1].headers.Authorization).toBeUndefined();
-    });
-
-    it("should reject oversized tokens and enrollment header injection before sending", async () => {
-        const request = vi.fn();
-        vi.stubGlobal("fetch", request);
-        const service = new IdentityService(config);
-        await expect(service.login("x".repeat(4097), new AbortController().signal)).rejects.toThrow();
-        await expect(service.enroll("agent", "token\r\nHeader: value", new AbortController().signal)).rejects.toThrow();
-        expect(request).not.toHaveBeenCalled();
+        await new IdentityService(config).login("one-use", new AbortController().signal, "BOUND_DEVICE");
+        expect(JSON.parse(request.mock.calls[0][1].body).device_id).toBe("BOUND_DEVICE");
+        expect(request.mock.calls[0][1].headers.Authorization).toBeUndefined();
     });
 
     it("should reject over-budget streamed replies and avoid reflecting server diagnostics", async () => {
@@ -76,20 +62,5 @@ describe("IdentityService", () => {
         await expect(new IdentityService(config).login("one-use", new AbortController().signal)).rejects.toThrow(
             "was rejected",
         );
-    });
-
-    it("should reject registration responses for a changed identity", async () => {
-        vi.stubGlobal(
-            "fetch",
-            vi
-                .fn()
-                .mockResolvedValueOnce(
-                    response({ user_id: account.user_id, login_token: "one-use", expires_in_ms: 60000 }),
-                )
-                .mockResolvedValueOnce(response({ ...account, user_id: "@another:agents.example" })),
-        );
-        await expect(
-            new IdentityService(config).enroll("agent", "admission-test", new AbortController().signal),
-        ).rejects.toThrow("identity changed");
     });
 });

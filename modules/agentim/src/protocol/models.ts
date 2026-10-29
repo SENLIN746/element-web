@@ -105,3 +105,39 @@ export interface DeviceLoginTokenResponse {
     readonly login_token: string;
     readonly expires_in_ms: 60000;
 }
+
+/** Canonical OnboardingCreate wire representation. */
+export interface OnboardingCreate {
+    readonly attempt_id: string;
+    readonly device_id: string;
+    readonly code_challenge: string;
+    readonly localpart: string;
+    readonly display_name?: string;
+}
+
+/** Canonical OnboardingStatus wire representation. */
+export interface OnboardingStatus {
+    readonly attempt_id: string;
+    readonly device_id: string;
+    readonly expires_at_ms: number;
+    readonly state: "reserved" | "provisioned" | "completed";
+    readonly user_id?: string;
+}
+
+/** Canonical OnboardingGrant wire representation. */
+export interface OnboardingGrant {
+    readonly attempt_id: string;
+    readonly device_id: string;
+    readonly expires_at_ms: number;
+    readonly state: "reserved" | "provisioned" | "completed";
+    readonly user_id: string;
+    readonly login_token: string;
+    readonly expires_in_ms: number;
+}
+
+/** Canonical OnboardingCapabilities wire representation. */
+export interface OnboardingCapabilities {
+    readonly mode: "open" | "closed";
+    readonly protocol: 2;
+    readonly attempt_lifetime_ms: number;
+}

@@ -9,6 +9,8 @@ import React from "react";
 import type { Api, Module } from "@element-hq/element-web-module-api";
 import { CONFIG_KEY, parseConfig } from "./configuration/ModuleConfig";
 import { LoginGateway } from "./features/identity/LoginGateway";
+import { IdentityService } from "./features/identity/IdentityService";
+import { startOnboardingCompletion } from "./features/identity/OnboardingCompletion";
 import { registerAgentNavigation } from "./navigation/AgentNavigation";
 import translations from "./translations.json";
 import pairingTranslations from "./features/pairing/translations.json";
@@ -24,6 +26,7 @@ export class AgentIMModule implements Module {
     public async load(): Promise<void> {
         const config = parseConfig(this.api.config.get(CONFIG_KEY));
         if (!config) return;
+        startOnboardingCompletion(this.api, new IdentityService(config).onboarding);
         this.api.i18n.register({ ...translations, ...identityTranslations, ...pairingTranslations });
         const stylesheet = document.createElement("style");
         stylesheet.textContent = style + loginStyle;
