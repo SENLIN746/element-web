@@ -33,7 +33,16 @@ export function validateAgentIMPath(
     if (parts.some((part) => part === "." || part === "..")) throw new Error("Invalid AgentIM extension path");
     let allowed = false;
     let keys: readonly string[] = [];
-    if (path === "/profiles/me") allowed = method === "GET" || method === "PUT";
+    if (path === "/account/credentials") allowed = method === "GET" || method === "POST";
+    else if (
+        parts.length === 4 &&
+        parts[0] === "account" &&
+        parts[1] === "credentials" &&
+        /^[A-Za-z0-9_-]{43}$/.test(parts[2]) &&
+        parts[3] === "revoke"
+    )
+        allowed = method === "POST";
+    else if (path === "/profiles/me") allowed = method === "GET" || method === "PUT";
     else if (path === "/discovery") {
         allowed = method === "GET";
         keys = ["query", "capability", "after", "limit"];

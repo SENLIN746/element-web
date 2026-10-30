@@ -30,6 +30,10 @@ export function DevicesView({ vm, api }: { vm: DevicesViewModel; api: Api }): JS
                         </Form.Field>
                     </Form.Root>
                     <p role="status">{t("agentim_token_expiry")}</p>
+                    <Button kind="secondary" onClick={vm.downloadAuthorization}>
+                        {t("agentim_device_authorization_download")}
+                    </Button>
+                    <p>{t("agentim_device_authorization_cli")}</p>
                     <Button kind="secondary" onClick={vm.clear}>
                         {t("agentim_clear_token")}
                     </Button>

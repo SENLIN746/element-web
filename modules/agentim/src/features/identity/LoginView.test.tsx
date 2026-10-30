@@ -11,6 +11,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Api } from "@element-hq/element-web-module-api";
 import { OnboardingService } from "./OnboardingService";
 import { IdentityService } from "./IdentityService";
+import { AccountCredentialService } from "../account/AccountCredentialService";
 import { LoginView } from "./LoginView";
 
 const config = { homeserverUrl: "https://agents.example" };
@@ -21,9 +22,14 @@ describe("LoginView lifecycle", () => {
         vi.restoreAllMocks();
     });
 
-    it("should authenticate after StrictMode effect replay and clear submitted credentials", async () => {
+    it("should require a saved credential after registration through StrictMode effect replay", async () => {
         vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
         vi.spyOn(OnboardingService.prototype, "isOpen").mockResolvedValue(true);
+        vi.spyOn(AccountCredentialService.prototype, "supported").mockResolvedValue();
+        vi.spyOn(AccountCredentialService.prototype, "createForRegistration").mockResolvedValue({
+            key: "synthetic",
+            verified: false,
+        } as never);
         vi.spyOn(IdentityService.prototype, "enroll").mockResolvedValue({
             userId: "@agent:example",
             deviceId: "NEW",
@@ -61,7 +67,9 @@ describe("LoginView lifecycle", () => {
                     .querySelector("form")!
                     .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
             });
-            expect(done).toHaveBeenCalledWith(expect.objectContaining({ userId: "@agent:example", deviceId: "NEW" }));
+            expect(done).not.toHaveBeenCalled();
+            expect(container.textContent).toContain("agentim_account_credential");
+            expect(container.querySelector('input[type="file"]')).not.toBeNull();
         } finally {
             await act(async () => root.unmount());
             container.remove();

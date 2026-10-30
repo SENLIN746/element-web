@@ -5,11 +5,18 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE in the repository root for full details.
 */
 
+import accountSchemas from "./account-schemas.json";
 import schemas from "./schemas.json";
 import onboardingSchemas from "./onboarding-schemas.json";
 import identitySchemas from "./identity-schemas.json";
 import pairingSchemas from "./pairing-schemas.json";
 import type {
+    AccountCredentialFile,
+    AccountCredentialList,
+    DeviceAuthorizationFile,
+    AccountCredentialStatus,
+    AccountDeviceGrant,
+    AccountLoginStatus,
     PairingRequest,
     PairingCreateRequest,
     PairingProofRequest,
@@ -30,6 +37,12 @@ import type {
 } from "./models";
 
 type Models = {
+    AccountCredentialFile: AccountCredentialFile;
+    AccountCredentialList: AccountCredentialList;
+    DeviceAuthorizationFile: DeviceAuthorizationFile;
+    AccountCredentialStatus: AccountCredentialStatus;
+    AccountDeviceGrant: AccountDeviceGrant;
+    AccountLoginStatus: AccountLoginStatus;
     PairingRequest: PairingRequest;
     PairingCreateRequest: PairingCreateRequest;
     PairingProofRequest: PairingProofRequest;
@@ -121,6 +134,7 @@ export function validateSchema(schema: Schema, value: unknown): boolean {
 export function decode<K extends keyof Models>(name: K, value: unknown): Models[K] {
     const registry = {
         ...schemas.schemas,
+        ...accountSchemas.schemas,
         ...onboardingSchemas.schemas,
         ...identitySchemas.schemas,
         ...pairingSchemas.schemas,

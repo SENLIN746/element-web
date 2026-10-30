@@ -214,5 +214,77 @@
     "agentim_registration_retry": {
         "en": "Check again",
         "zh-hans": "重新检查"
+    },
+    "agentim_intent_recover": {
+        "en": "Restore account",
+        "zh-hans": "恢复账号"
+    },
+    "agentim_intent_recover_title": {
+        "en": "Restore an existing identity",
+        "zh-hans": "恢复已有身份"
+    },
+    "agentim_intent_recover_hint": {
+        "en": "Use your saved account credential to connect a new independent device.",
+        "zh-hans": "使用已保存的账号凭据，为原身份接入新的独立设备。"
+    },
+    "agentim_account_credential": {
+        "en": "Account credential",
+        "zh-hans": "账号凭据"
+    },
+    "agentim_account_credential_hint": {
+        "en": "Before entering AgentIM, save this account-control file privately and read it back to verify it. Anyone holding it can sign in as this identity. If this profile is lost before saving, recovery is not guaranteed.",
+        "zh-hans": "进入首页前，请将账号控制文件保存在私密位置，并回读验证。持有该文件即可用此身份登录；若尚未保存就丢失本 profile，不保证能够恢复。"
+    },
+    "agentim_account_credential_download": {
+        "en": "Save account credential",
+        "zh-hans": "保存账号凭据"
+    },
+    "agentim_account_credential_verify": {
+        "en": "Verify the saved account file",
+        "zh-hans": "回读验证已保存的账号文件"
+    },
+    "agentim_account_credential_verified": {
+        "en": "Saved account credential verified.",
+        "zh-hans": "已验证保存的账号凭据。"
+    },
+    "agentim_account_credential_failed": {
+        "en": "Cannot verify this account credential. The original state was preserved.",
+        "zh-hans": "无法验证该账号凭据，原有状态已保留。"
+    },
+    "agentim_account_credential_create": {
+        "en": "Prepare account credential backup",
+        "zh-hans": "准备账号凭据备份"
+    },
+    "agentim_account_restore_hint": {
+        "en": "This signs in to the existing Matrix identity. It creates a new device; it does not recreate the account or restore historical chat keys.",
+        "zh-hans": "此操作登录原有 Matrix 身份并创建新设备；不会重新注册账号，也不会自动恢复历史聊天密钥。"
+    },
+    "agentim_account_restore_file": {
+        "en": "Choose your private account credential file",
+        "zh-hans": "选择私密账号凭据文件"
+    },
+    "agentim_credential_purposes": {
+        "en": "Account credential: future sign-in. Registration proof: interrupted registration only. Chat recovery key: encrypted history. Device state: preserve the entire private directory to restart the same device. These are different credentials.",
+        "zh-hans": "账号凭据用于再次登录；注册证明仅用于中断注册；聊天恢复密钥用于加密历史；设备状态需完整保留私密目录，才能重启原设备。这些凭据不能互相替代。"
+    },
+    "agentim_device_authorization_download": {
+        "en": "Save short-lived authorization file",
+        "zh-hans": "保存短期设备授权文件"
+    },
+    "agentim_device_authorization_cli": {
+        "en": "Use agentim connect --authorization-file or agentim run --authorization-file in the target environment before expiry. For repeatable cross-environment access, use the account credential file instead. Keep the file private (0600).",
+        "zh-hans": "请在过期前于目标环境使用 agentim connect --authorization-file 或 agentim run --authorization-file。跨环境反复接入优先使用账号凭据文件。 文件应限制为本人可读写（0600）。"
+    },
+    "agentim_account_credential_revoke": {
+        "en": "Revoke this account credential",
+        "zh-hans": "撤销这份账号凭据"
+    },
+    "agentim_account_credential_revoke_hint": {
+        "en": "Revocation blocks future logins with this file. Existing devices stay signed in. Prepare a new backup afterward.",
+        "zh-hans": "撤销后此文件不能用于后续登录，已有设备仍保持登录。撤销后请重新生成并备份凭据。"
+    },
+    "agentim_account_credential_cli": {
+        "en": "For a runtime that supports account credentials: restrict this file to your account (0600), keep AGENTIM_STATE_DIR private, then use agentim connect --credential-file /private/account.json or agentim run --credential-file /private/account.json. Keep the entire state directory to restart the same device.",
+        "zh-hans": "使用支持账号凭据的 runtime：将文件限制为本人可读写（0600），设置私密的 AGENTIM_STATE_DIR，再用 agentim connect --credential-file /private/account.json 或 agentim run --credential-file /private/account.json。完整保留状态目录才能重启同一设备。"
     }
 }

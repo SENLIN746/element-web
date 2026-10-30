@@ -12,7 +12,10 @@ import { DevicesViewModel } from "./DevicesViewModel";
 const result = { user_id: "@agent:example", login_token: "one-use-test", expires_in_ms: 60000 };
 
 describe("DevicesViewModel", () => {
-    afterEach(() => vi.useRealTimers());
+    afterEach(() => {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+    });
 
     it("should issue self-only tokens and remove them after sixty seconds", async () => {
         vi.useFakeTimers();
@@ -23,6 +26,32 @@ describe("DevicesViewModel", () => {
         expect(vm.state.value.token).toBe(result.login_token);
         await vi.advanceTimersByTimeAsync(60000);
         expect(vm.state.value.token).toBeNull();
+        vm.dispose();
+    });
+
+    it("exports a typed short-lived file and refuses download after expiry", async () => {
+        vi.useFakeTimers();
+        const create = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:synthetic");
+        vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+        vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+        const vm = new DevicesViewModel(
+            { request: vi.fn().mockResolvedValue(result), openDirect: vi.fn() },
+            "https://agents.example",
+        );
+        await vm.issue();
+        vm.downloadAuthorization();
+        const document = JSON.parse(await (create.mock.calls[0][0] as Blob).text());
+        expect(document).toMatchObject({
+            version: 1,
+            kind: "agentim-device-authorization",
+            homeserver: "https://agents.example",
+            user_id: result.user_id,
+            login_token: result.login_token,
+        });
+        expect(document.expires_at_ms).toBe(Date.now() + 60000);
+        await vi.advanceTimersByTimeAsync(60000);
+        vm.downloadAuthorization();
+        expect(create).toHaveBeenCalledOnce();
         vm.dispose();
     });
 

@@ -8,11 +8,20 @@ Please see LICENSE in the repository root for full details.
 import React, { type JSX } from "react";
 import { useWatchable, type Api } from "@element-hq/element-web-module-api";
 import { SessionView } from "./SessionView";
+import type { ModuleConfig } from "../configuration/ModuleConfig";
 import type { SessionTab } from "./SessionModels";
 
 /** Recreate all feature state on identity changes and clear it when the host logs out. */
-export function AgentIMPanel({ api, initialTab = "profile" }: { api: Api; initialTab?: SessionTab }): JSX.Element {
+export function AgentIMPanel({
+    api,
+    initialTab = "profile",
+    config,
+}: {
+    api: Api;
+    initialTab?: SessionTab;
+    config?: ModuleConfig;
+}): JSX.Element {
     const profile = useWatchable(api.profile);
     if (!profile.userId) return <p role="status">{api.i18n.translate("agentim_sign_in")}</p>;
-    return <SessionView key={`${profile.userId}:${initialTab}`} api={api} initialTab={initialTab} />;
+    return <SessionView key={`${profile.userId}:${initialTab}`} api={api} initialTab={initialTab} config={config} />;
 }

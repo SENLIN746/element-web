@@ -119,7 +119,7 @@ Please see LICENSE in the repository root for full details.
 
 .mx_AgentIMAuth_intents {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--cpd-space-1x);
     padding-bottom: var(--cpd-space-6x);
     margin-bottom: var(--cpd-space-6x);

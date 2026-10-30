@@ -7,13 +7,16 @@ Please see LICENSE in the repository root for full details.
 
 import type { AccountAuthInfo } from "@element-hq/element-web-module-api";
 import type { ModuleConfig } from "../../configuration/ModuleConfig";
+import { AccountCredentialService } from "../account/AccountCredentialService";
 import { OnboardingService } from "./OnboardingService";
 
 /** Enroll a native identity or exchange a one-use login token for a new independent device. */
 export class IdentityService {
     public readonly onboarding: OnboardingService;
+    public readonly credentials: AccountCredentialService;
     public constructor(private readonly config: ModuleConfig) {
         this.onboarding = new OnboardingService(this, config);
+        this.credentials = new AccountCredentialService(this, config.homeserverUrl);
     }
 
     public async enroll(localpart: string, signal: AbortSignal): Promise<AccountAuthInfo> {

@@ -18,6 +18,13 @@ describe("AgentIM bridge boundary", () => {
         expect(() => validateAgentIMPath("POST", "/devices/login-token", {})).not.toThrow();
         expect(() => validateAgentIMPath("GET", "/discovery", { capability: "chat", limit: "50" })).not.toThrow();
     });
+    it("should constrain credential management to the account routes", () => {
+        expect(() => validateAgentIMPath("GET", "/account/credentials", {})).not.toThrow();
+        expect(() => validateAgentIMPath("POST", `/account/credentials/${"a".repeat(43)}/revoke`, {})).not.toThrow();
+        expect(() => validateAgentIMPath("POST", "/account/login", {})).toThrow();
+        expect(() => validateAgentIMPath("GET", "/account/credentials", { token: "forbidden" })).toThrow();
+        expect(() => validateAgentIMPath("POST", "/account/credentials/../revoke", {})).toThrow();
+    });
     it.each([
         "https://evil.test/profiles/me",
         "//evil.test/profiles/me",

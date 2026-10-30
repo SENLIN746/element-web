@@ -6,10 +6,15 @@ Please see LICENSE in the repository root for full details.
 */
 
 import type { Api } from "@element-hq/element-web-module-api";
+import type { AccountCredentialService } from "../account/AccountCredentialService";
 import type { OnboardingService } from "./OnboardingService";
 
 /** Finish durable bootstrap after Element has persisted and started its crypto session. */
-export function startOnboardingCompletion(api: Api, service: OnboardingService): void {
+export function startOnboardingCompletion(
+    api: Api,
+    service: OnboardingService,
+    credentials?: AccountCredentialService,
+): void {
     let running = false;
     let retry: ReturnType<typeof setTimeout> | undefined;
     const resume = async (): Promise<void> => {
@@ -18,6 +23,7 @@ export function startOnboardingCompletion(api: Api, service: OnboardingService):
         clearTimeout(retry);
         try {
             await service.completeWhenReady(api);
+            await credentials?.completeWhenReady(api);
         } catch {
             // Preserve the proof and device. Never log credentials or reset on transient failure.
             retry = setTimeout(() => void resume(), 10000);

@@ -7,6 +7,9 @@ Please see LICENSE in the repository root for full details.
 
 import React, { useEffect, useState, type JSX } from "react";
 import type { Api } from "@element-hq/element-web-module-api";
+import type { ModuleConfig } from "../configuration/ModuleConfig";
+import { IdentityService } from "../features/identity/IdentityService";
+import { CredentialBackupViewModel } from "../features/account/CredentialBackupViewModel";
 import { ProfileService } from "../features/profiles/ProfileService";
 import { ProfileViewModel } from "../features/profiles/ProfileViewModel";
 import { DiscoveryService } from "../features/discovery/DiscoveryService";
@@ -19,7 +22,15 @@ import type { SessionModels, SessionTab } from "./SessionModels";
 import { SessionContent } from "./SessionContent";
 
 /** Construct and dispose feature state inside the owning effect, including StrictMode replay. */
-export function SessionView({ api, initialTab }: { api: Api; initialTab: SessionTab }): JSX.Element {
+export function SessionView({
+    api,
+    initialTab,
+    config,
+}: {
+    api: Api;
+    initialTab: SessionTab;
+    config?: ModuleConfig;
+}): JSX.Element {
     const [models, setModels] = useState<SessionModels | null>(null);
     useEffect(() => {
         const profiles = new ProfileService(api.client.agentim);
@@ -27,13 +38,14 @@ export function SessionView({ api, initialTab }: { api: Api; initialTab: Session
             profile: new ProfileViewModel(profiles),
             discovery: new DiscoveryViewModel(new DiscoveryService(api.client.agentim), profiles),
             contacts: new ContactsViewModel(new ContactService(api.client.agentim), api.client.agentim, api.navigation),
-            devices: new DevicesViewModel(api.client.agentim),
+            devices: new DevicesViewModel(api.client.agentim, config?.homeserverUrl),
+            ...(config ? { credential: new CredentialBackupViewModel(new IdentityService(config).credentials) } : {}),
         };
         setModels(owned);
         return () => {
             Object.values(owned).forEach((model) => model.dispose());
         };
-    }, [api]);
+    }, [api, config]);
     return models ? (
         <SessionContent api={api} models={models} initialTab={initialTab} />
     ) : (

@@ -5,6 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE in the repository root for full details.
 */
 
+import type { CredentialBackupViewModel } from "../features/account/CredentialBackupViewModel";
 import type { ProfileViewModel } from "../features/profiles/ProfileViewModel";
 import type { DiscoveryViewModel } from "../features/discovery/DiscoveryViewModel";
 import type { ContactsViewModel } from "../features/contacts/ContactsViewModel";
@@ -19,4 +20,5 @@ export interface SessionModels {
     discovery: DiscoveryViewModel;
     contacts: ContactsViewModel;
     devices: DevicesViewModel;
+    credential?: CredentialBackupViewModel;
 }

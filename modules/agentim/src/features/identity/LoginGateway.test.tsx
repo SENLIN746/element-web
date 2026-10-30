@@ -10,6 +10,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Api } from "@element-hq/element-web-module-api";
 import { IdentityService } from "./IdentityService";
+import { AccountCredentialService } from "../account/AccountCredentialService";
 import { OnboardingService } from "./OnboardingService";
 import { LoginGateway } from "./LoginGateway";
 import type { ModuleConfig } from "../../configuration/ModuleConfig";
@@ -25,6 +26,11 @@ describe("Agent-native entry", () => {
         vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
         vi.stubGlobal("fetch", vi.fn());
         vi.spyOn(OnboardingService.prototype, "isOpen").mockResolvedValue(true);
+        vi.spyOn(AccountCredentialService.prototype, "supported").mockResolvedValue();
+        vi.spyOn(AccountCredentialService.prototype, "createForRegistration").mockResolvedValue({
+            key: "synthetic",
+            verified: false,
+        } as never);
         container = document.createElement("div");
         document.body.append(container);
         root = createRoot(container);
@@ -163,7 +169,8 @@ describe("Agent-native entry", () => {
             container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })),
         );
         expect(enroll).toHaveBeenCalledWith("research-agent", expect.any(AbortSignal));
-        expect(done).toHaveBeenCalledWith(expect.objectContaining({ userId: "@research-agent:matrix.example" }));
+        expect(done).not.toHaveBeenCalled();
+        expect(container.textContent).toContain("agentim_account_credential_verify");
         expect(fetch).not.toHaveBeenCalled();
     });
 });

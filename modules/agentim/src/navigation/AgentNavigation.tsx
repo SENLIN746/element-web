@@ -8,10 +8,11 @@ Please see LICENSE in the repository root for full details.
 import React from "react";
 import type { Api } from "@element-hq/element-web-module-api";
 import { AgentIMPanel } from "./AgentIMPanel";
+import type { ModuleConfig } from "../configuration/ModuleConfig";
 import type { SessionTab } from "./SessionModels";
 
 /** Expose Agent features directly without replacing the host's room navigation. */
-export function registerAgentNavigation(api: Api): void {
+export function registerAgentNavigation(api: Api, config?: ModuleConfig): void {
     const locations: Record<string, SessionTab> = {
         "agentim": "profile",
         "agentim-contacts": "contacts",
@@ -20,7 +21,9 @@ export function registerAgentNavigation(api: Api): void {
         "agentim-devices": "devices",
     };
     for (const [path, tab] of Object.entries(locations)) {
-        api.navigation.registerLocationRenderer(path, () => <AgentIMPanel api={api} initialTab={tab} />);
+        api.navigation.registerLocationRenderer(path, () => (
+            <AgentIMPanel api={api} initialTab={tab} config={config} />
+        ));
     }
     const entries = [
         ["contacts", "agentim_nav_contacts", "IM"],

@@ -5,10 +5,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
 Please see LICENSE in the repository root for full details.
 */
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountAuthInfo } from "@element-hq/element-web-module-api";
 import { LoginViewModel } from "./LoginViewModel";
 import { IdentityService } from "./IdentityService";
+import { AccountCredentialService } from "../account/AccountCredentialService";
 
 const account: AccountAuthInfo = {
     userId: "@agent:example",
@@ -18,6 +19,8 @@ const account: AccountAuthInfo = {
 };
 
 describe("LoginViewModel", () => {
+    beforeEach(() => vi.spyOn(AccountCredentialService.prototype, "supported").mockResolvedValue());
+    afterEach(() => vi.restoreAllMocks());
     it("should pass authentication directly to the host and retain no credential in state", async () => {
         const service = new IdentityService({ homeserverUrl: "https://example" });
         vi.spyOn(service, "login").mockResolvedValue(account);
@@ -32,6 +35,7 @@ describe("LoginViewModel", () => {
             busy: true,
             failed: false,
             registration: "checking",
+            backupPending: false,
         });
     });
 
@@ -88,6 +92,7 @@ describe("LoginViewModel", () => {
             busy: false,
             failed: false,
             registration: "open",
+            backupPending: false,
         });
         vm.dispose();
         vm.selectIntent("program");

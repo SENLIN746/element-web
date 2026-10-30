@@ -11,6 +11,8 @@ import { useWatchable, type Api, type CustomLoginComponentProps } from "@element
 import type { LoginViewModel } from "./LoginViewModel";
 import { PairingView } from "../pairing/PairingView";
 import { LoginForm } from "./LoginForm";
+import { CredentialBackupView } from "../account/CredentialBackupView";
+import { AccountRecoveryView } from "../account/AccountRecoveryView";
 import { ProgramAccessView } from "./ProgramAccessView";
 
 /** Agent identity is primary; protocol compatibility remains an explicit secondary path. */
@@ -76,12 +78,12 @@ export function LoginShell({
                 </aside>
                 <section className="mx_AgentIMAuth_card" aria-label={t("agentim_auth_title")}>
                     <nav className="mx_AgentIMAuth_intents" aria-label={t("agentim_choose_intent")}>
-                        {(["connect", "enroll", "program"] as const).map((intent) => (
+                        {(["connect", "enroll", "recover", "program"] as const).map((intent) => (
                             <Button
                                 key={intent}
                                 kind={state.intent === intent ? "primary" : "tertiary"}
                                 aria-pressed={state.intent === intent}
-                                disabled={state.busy}
+                                disabled={state.busy || state.backupPending}
                                 onClick={() => vm.selectIntent(intent)}
                             >
                                 {t(`agentim_intent_${intent}`)}
@@ -92,10 +94,14 @@ export function LoginShell({
                         {t(`agentim_intent_${state.intent}_title`)}
                     </Heading>
                     <p className="mx_AgentIMAuth_context">{t(`agentim_intent_${state.intent}_hint`)}</p>
-                    {state.intent === "program" ? (
+                    {state.backupPending ? (
+                        <CredentialBackupView api={api} vm={vm.backup} />
+                    ) : state.intent === "program" ? (
                         <ProgramAccessView api={api} siteUrl={siteUrl} />
                     ) : serverMatches ? (
-                        state.intent === "connect" ? (
+                        state.intent === "recover" ? (
+                            <AccountRecoveryView api={api} vm={vm} />
+                        ) : state.intent === "connect" ? (
                             <PairingView api={api} vm={vm.pairing} server={identityServerName} />
                         ) : (
                             <LoginForm key={state.intent} api={api} vm={vm} server={identityServerName} />
@@ -111,6 +117,7 @@ export function LoginShell({
                             </Button>
                         </div>
                     )}
+                    {state.failed && state.intent === "recover" && <p role="alert">{t("agentim_auth_failed")}</p>}
                     <p className="mx_AgentIMAuth_boundary">
                         <a href={`${siteUrl || homeserverUrl}/downloads/`} target="_blank" rel="noreferrer noopener">
                             {t("agentim_download_clients")}
@@ -118,7 +125,11 @@ export function LoginShell({
                     </p>
                     {onCompatibility && (
                         <footer className="mx_AgentIMAuth_compatibility">
-                            <Button kind="tertiary" disabled={state.busy} onClick={onCompatibility}>
+                            <Button
+                                kind="tertiary"
+                                disabled={state.busy || state.backupPending}
+                                onClick={onCompatibility}
+                            >
                                 {t("agentim_matrix_compatibility")}
                             </Button>
                         </footer>

@@ -1,0 +1,272 @@
+{
+    "generated_by": "scripts/checks/generate_visual_protocol.py",
+    "sources": {
+        "runtime-state/v1/authorization/schemas/device-authorization.schema.json": "b14c343a74b9709fad2f9850d9eb373df8d471ca8c2ee90a9c2aa90ab0246ccc",
+        "homeserver-api/v2/account/schemas/credential-list.schema.json": "dd8719eabd9467ff22eeb532edd4677821466d02bd5d9b7e8c5f86898c930bbd",
+        "local-api/v2/identity/schemas/account-credential-file.schema.json": "2d22a74b28605d73ed4d4dbbba7023c398a749bd5e8c2b01a05f1f87f9d55c04",
+        "homeserver-api/v2/account/schemas/credential-status.schema.json": "036b5c2c4c7d81235f301724f3bb19921ba601626a6b80efca1e82f715ed6cc5",
+        "homeserver-api/v2/account/schemas/device-grant.schema.json": "5bb9037be5924b9bea80dd74472b72b32a368ec98463815d6acbdf6995ede343",
+        "homeserver-api/v2/account/schemas/login-status.schema.json": "322fb167337f32d5c85116eff2cfd9bdc0daf02a0d78c3b65927a16974676d54"
+    },
+    "schemas": {
+        "DeviceAuthorizationFile": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/runtime-state/v1/authorization/schemas/device-authorization.schema.json",
+            "title": "DeviceAuthorizationFile",
+            "description": "Private short-lived one-use native device admission. Not a permanent account recovery credential. Never place in URLs, argv or logs.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "version": {
+                    "const": 1
+                },
+                "kind": {
+                    "const": "agentim-device-authorization"
+                },
+                "homeserver": {
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 2048
+                },
+                "user_id": {
+                    "type": "string",
+                    "pattern": "^@",
+                    "minLength": 4,
+                    "maxLength": 255
+                },
+                "login_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "writeOnly": true
+                },
+                "expires_at_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                }
+            },
+            "required": ["version", "kind", "homeserver", "user_id", "login_token", "expires_at_ms"],
+            "x-examples": {
+                "valid": ["../examples/valid/device-authorization.json"],
+                "invalid": ["../examples/invalid/device-authorization.json"]
+            }
+        },
+        "AccountCredentialList": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/account/schemas/credential-list.schema.json",
+            "title": "AccountCredentialList",
+            "type": "object",
+            "properties": {
+                "credentials": {
+                    "type": "array",
+                    "maxItems": 16,
+                    "items": {
+                        "$schema": "https://json-schema.org/draft/2020-12/schema",
+                        "$id": "https://agentim.local/contracts/homeserver-api/v2/account/schemas/credential-status.schema.json",
+                        "title": "AccountCredentialStatus",
+                        "type": "object",
+                        "properties": {
+                            "credential_id": {
+                                "type": "string",
+                                "minLength": 43,
+                                "maxLength": 43,
+                                "pattern": "^[A-Za-z0-9_-]{43}$"
+                            },
+                            "user_id": {
+                                "type": "string",
+                                "minLength": 4,
+                                "maxLength": 255,
+                                "pattern": "^@"
+                            },
+                            "created_at_ms": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                            },
+                            "revoked": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": ["credential_id", "user_id", "created_at_ms", "revoked"],
+                        "additionalProperties": false,
+                        "x-examples": {
+                            "valid": ["../examples/valid/credential-status.json"],
+                            "invalid": ["../examples/invalid/credential-status.json"]
+                        }
+                    }
+                }
+            },
+            "required": ["credentials"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/credential-list.json"],
+                "invalid": ["../examples/invalid/credential-list.json"]
+            }
+        },
+        "AccountCredentialFile": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/local-api/v2/identity/schemas/account-credential-file.schema.json",
+            "title": "AccountCredentialFile",
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "integer",
+                    "const": 1
+                },
+                "kind": {
+                    "type": "string",
+                    "const": "agentim-account-credential"
+                },
+                "homeserver": {
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 2048
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@"
+                },
+                "credential_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "credential_secret": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$",
+                    "writeOnly": true
+                }
+            },
+            "required": ["version", "kind", "homeserver", "user_id", "credential_id", "credential_secret"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/account-credential-file.json"],
+                "invalid": ["../examples/invalid/account-credential-file.json"]
+            }
+        },
+        "AccountCredentialStatus": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/account/schemas/credential-status.schema.json",
+            "title": "AccountCredentialStatus",
+            "type": "object",
+            "properties": {
+                "credential_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@"
+                },
+                "created_at_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "revoked": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["credential_id", "user_id", "created_at_ms", "revoked"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/credential-status.json"],
+                "invalid": ["../examples/invalid/credential-status.json"]
+            }
+        },
+        "AccountDeviceGrant": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/account/schemas/device-grant.schema.json",
+            "title": "AccountDeviceGrant",
+            "type": "object",
+            "properties": {
+                "attempt_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@"
+                },
+                "device_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "access_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8192,
+                    "writeOnly": true
+                },
+                "expires_at_ms": {
+                    "type": ["integer", "null"],
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                },
+                "refresh_token": {
+                    "type": ["string", "null"],
+                    "maxLength": 8192,
+                    "writeOnly": true
+                }
+            },
+            "required": ["attempt_id", "user_id", "device_id", "access_token", "expires_at_ms", "refresh_token"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/device-grant.json"],
+                "invalid": ["../examples/invalid/device-grant.json"]
+            }
+        },
+        "AccountLoginStatus": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://agentim.local/contracts/homeserver-api/v2/account/schemas/login-status.schema.json",
+            "title": "AccountLoginStatus",
+            "type": "object",
+            "properties": {
+                "attempt_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "user_id": {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 255,
+                    "pattern": "^@"
+                },
+                "device_id": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 43,
+                    "pattern": "^[A-Za-z0-9_-]{43}$"
+                },
+                "state": {
+                    "type": "string",
+                    "enum": ["reserved", "issued", "completed"]
+                }
+            },
+            "required": ["attempt_id", "user_id", "device_id", "state"],
+            "additionalProperties": false,
+            "x-examples": {
+                "valid": ["../examples/valid/login-status.json"],
+                "invalid": ["../examples/invalid/login-status.json"]
+            }
+        }
+    }
+}

@@ -45,7 +45,9 @@ export class AgentIMApi implements IAgentIMApi {
                     { ...query },
                     snapshot,
                     {
-                        prefix: "/_synapse/client/agentim/v1",
+                        prefix: path.startsWith("/account/")
+                            ? "/_synapse/client/agentim/v2"
+                            : "/_synapse/client/agentim/v1",
                     },
                 );
                 assertActive();

@@ -26,7 +26,8 @@ export class AgentIMModule implements Module {
     public async load(): Promise<void> {
         const config = parseConfig(this.api.config.get(CONFIG_KEY));
         if (!config) return;
-        startOnboardingCompletion(this.api, new IdentityService(config).onboarding);
+        const identity = new IdentityService(config);
+        startOnboardingCompletion(this.api, identity.onboarding, identity.credentials);
         this.api.i18n.register({ ...translations, ...identityTranslations, ...pairingTranslations });
         const stylesheet = document.createElement("style");
         stylesheet.textContent = style + loginStyle;
@@ -34,6 +35,6 @@ export class AgentIMModule implements Module {
         this.api.customComponents.registerLoginComponent((props, OriginalComponent) => (
             <LoginGateway {...props} api={this.api} config={config} compatibility={<OriginalComponent {...props} />} />
         ));
-        registerAgentNavigation(this.api);
+        registerAgentNavigation(this.api, config);
     }
 }

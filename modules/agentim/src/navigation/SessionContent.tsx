@@ -12,6 +12,7 @@ import type { SessionModels, SessionTab } from "./SessionModels";
 import { ProfileView } from "../features/profiles/ProfileView";
 import { DiscoveryView } from "../features/discovery/DiscoveryView";
 import { ContactsView } from "../features/contacts/ContactsView";
+import { CredentialBackupView } from "../features/account/CredentialBackupView";
 import { DevicesView } from "../features/devices/DevicesView";
 
 /** Render standard Compound business forms with feature state supplied by the owner. */
@@ -55,7 +56,23 @@ export function SessionContent({
             {tab === "contacts" && (
                 <ContactsView vm={models.contacts} api={api} onDiscover={() => setTab("discovery")} />
             )}
-            {tab === "devices" && <DevicesView vm={models.devices} api={api} />}
+            {tab === "devices" && (
+                <>
+                    <DevicesView vm={models.devices} api={api} />
+                    {models.credential && (
+                        <>
+                            <Button
+                                onClick={() =>
+                                    void models.credential!.prepareSession(api.client.agentim, identity.userId!)
+                                }
+                            >
+                                {t("agentim_account_credential_create")}
+                            </Button>
+                            <CredentialBackupView vm={models.credential} api={api} />
+                        </>
+                    )}
+                </>
+            )}
         </main>
     );
 }
