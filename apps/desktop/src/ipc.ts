@@ -56,7 +56,7 @@ ipcMain.on("ipcCall", async function (_ev: IpcMainEvent, payload) {
 
     switch (payload.name) {
         case "getUpdateFeedUrl":
-            ret = autoUpdater.getFeedURL();
+            ret = getConfig().update_base_url ?? autoUpdater.getFeedURL();
             break;
         case "setLanguage":
             global.appLocalization.setAppLocale(args[0]);

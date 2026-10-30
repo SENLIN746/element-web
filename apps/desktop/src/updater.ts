@@ -13,11 +13,25 @@ import { getSquirrelExecutable } from "./squirrelhooks.js";
 import { _t } from "./language-helper.js";
 import { initialisePromise } from "./ipc.js";
 import { getConfig } from "./config.js";
+import { getBuildConfig } from "./build-config.js";
+import { ProductUpdater } from "./updates/controller.js";
+
+let productUpdater: ProductUpdater | undefined;
 
 const UPDATE_POLL_INTERVAL_MS = 60 * 60 * 1000;
 const INITIAL_UPDATE_DELAY_MS = 30 * 1000;
 
 function installUpdate(): void {
+    if (productUpdater) {
+        void productUpdater
+            .install()
+            .catch(() =>
+                ipcChannelSendUpdateStatus(
+                    "Unable to open the verified AgentIM update; your current app was preserved.",
+                ),
+            );
+        return;
+    }
     // for some reason, quitAndInstall does not fire the
     // before-quit event, so we need to set the flag here.
     global.appQuitting = true;
@@ -55,6 +69,10 @@ async function safeCheckForUpdate(): Promise<void> {
 }
 
 async function pollForUpdates(): Promise<void> {
+    if (productUpdater) {
+        await productUpdater.check();
+        return;
+    }
     try {
         // If we've already got a new update downloaded, then stop trying to check for new ones, as according to the doc
         // at https://github.com/electron/electron/blob/main/docs/api/auto-updater.md#autoupdatercheckforupdates
@@ -73,6 +91,11 @@ async function pollForUpdates(): Promise<void> {
 }
 
 export async function start(updateBaseUrl: string): Promise<void> {
+    if (getBuildConfig().appId === "im.agentim.desktop") {
+        productUpdater = new ProductUpdater(updateBaseUrl);
+        productUpdater.start();
+        return;
+    }
     if (!(await available())) return;
     console.log(`Starting auto update with base URL: ${updateBaseUrl}`);
     if (!updateBaseUrl.endsWith("/")) {
