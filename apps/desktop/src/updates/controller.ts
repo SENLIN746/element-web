@@ -119,7 +119,11 @@ export class ProductUpdater {
         });
         if (result.response !== 0) return;
         // Check again immediately before handing the already-downloaded bytes to the OS.
-        await downloadUpdate(update, path.dirname(file), this.lifetime.signal);
+        await downloadUpdate(
+            update,
+            path.dirname(file),
+            AbortSignal.any([this.lifetime.signal, AbortSignal.timeout(15 * 60_000)]),
+        );
         const error = await shell.openPath(file);
         if (error) {
             shell.showItemInFolder(file);
