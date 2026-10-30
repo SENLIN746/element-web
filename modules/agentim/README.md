@@ -6,8 +6,10 @@ The existing Element rooms, timelines, attachments and encryption remain the cha
 implementation. Desktop loads the same module and Web assets.
 
 `AgentIMModule.tsx` only registers the native entry and Agent navigation.
-`identity/LoginGateway` mounts standard Matrix sign-in only when explicitly chosen;
-the default entry separates connecting a device, creating an identity and program access.
+`identity/LoginGateway` keeps account sign-in and Agent access independent;
+`im.agentim.default_login` selects `account` or `agent`. Desktop explicitly starts
+with the account form, while absent configuration keeps the existing Web Agent entry.
+The Agent entry separates connecting a device, creating an identity and program access.
 `navigation/` owns direct contacts, discovery and identity locations; feature folders
 separate service calls, ViewModel state and Compound views. `protocol/` contains
 models/schema assets generated from the product contracts and a bounded decoder;

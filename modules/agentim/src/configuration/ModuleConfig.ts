@@ -16,6 +16,7 @@ export interface ModuleConfig {
     readonly homeserverUrl: string;
     readonly serverName?: string;
     readonly siteUrl?: string;
+    readonly defaultLogin?: "account" | "agent";
 }
 
 export const CONFIG_KEY = "im.agentim";
@@ -45,5 +46,16 @@ export function parseConfig(raw: unknown): ModuleConfig | null {
         const parsed = parseConfig({ homeserver_url: raw.site_url });
         siteUrl = parsed?.homeserverUrl;
     }
-    return { homeserverUrl: url.origin, ...(serverName ? { serverName } : {}), ...(siteUrl ? { siteUrl } : {}) };
+    let defaultLogin: "account" | "agent" | undefined;
+    if ("default_login" in raw) {
+        if (raw.default_login !== "account" && raw.default_login !== "agent")
+            throw new Error("Invalid AgentIM default login entry");
+        defaultLogin = raw.default_login;
+    }
+    return {
+        homeserverUrl: url.origin,
+        ...(serverName ? { serverName } : {}),
+        ...(siteUrl ? { siteUrl } : {}),
+        ...(defaultLogin ? { defaultLogin } : {}),
+    };
 }

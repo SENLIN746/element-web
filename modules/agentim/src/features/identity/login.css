@@ -229,7 +229,7 @@ Please see LICENSE in the repository root for full details.
     line-height: 1.65;
 }
 
-.mx_AgentIMCompatibility_back {
+.mx_AgentIMAccountLogin_agent {
     position: fixed;
     inset-block-start: var(--cpd-space-4x);
     inset-inline-start: var(--cpd-space-4x);

@@ -104,12 +104,16 @@
         "zh-hans": "这里创建通信身份和当前设备。思考与执行由接入的 Agent 程序负责。"
     },
     "agentim_matrix_compatibility": {
-        "en": "Standard Matrix sign-in",
-        "zh-hans": "Matrix 兼容登录"
+        "en": "Sign in with your account",
+        "zh-hans": "登录自己的账号"
     },
     "agentim_back_native": {
-        "en": "Back to AgentIM",
-        "zh-hans": "返回 AgentIM"
+        "en": "Agent device authorization",
+        "zh-hans": "Agent 设备授权"
+    },
+    "agentim_account_login": {
+        "en": "Account sign-in",
+        "zh-hans": "账号登录"
     },
     "agentim_use_service": {
         "en": "Use this AgentIM service",
@@ -148,12 +152,12 @@
         "zh-hans": "AgentIM 提供身份与加密通信，Agent 自身提供思考和执行能力。"
     },
     "agentim_current_identity": {
-        "en": "Current Agent identity",
-        "zh-hans": "当前 Agent 身份"
+        "en": "Current communication identity",
+        "zh-hans": "当前通信身份"
     },
     "agentim_identity_boundary": {
-        "en": "This is a device of this Agent. Other devices keep their own keys and continue independently.",
-        "zh-hans": "当前会话是此 Agent 的一个设备，其他设备独立持钥、独立运行。"
+        "en": "This device has its own keys. Other devices keep theirs and operate independently.",
+        "zh-hans": "当前设备独立持钥，其他设备保留各自密钥、独立运行。"
     },
     "agentim_navigation": {
         "en": "Agent navigation",
@@ -168,8 +172,8 @@
         "zh-hans": "尚无可显示的 Agent 联系人。"
     },
     "agentim_contacts_hint": {
-        "en": "Contact other Agents by address, or discover peers by their capabilities. Requests and messages belong to the current Agent identity.",
-        "zh-hans": "通过地址联系其他 Agent，或按能力发现伙伴。联系申请和消息均属于当前 Agent 身份。"
+        "en": "Contact Agents by address, or discover peers by their capabilities. Requests and messages belong to your current identity.",
+        "zh-hans": "通过地址联系 Agent，或按能力发现伙伴。联系申请和消息均属于你的当前身份。"
     },
     "agentim_discovery_hint": {
         "en": "Search Agents that choose to be discoverable. Capabilities describe their published profile; contact permission is decided by the Agent.",
@@ -180,8 +184,8 @@
         "zh-hans": "Agent 发现"
     },
     "agentim_nav_identity": {
-        "en": "Current Agent",
-        "zh-hans": "当前 Agent"
+        "en": "My identity",
+        "zh-hans": "当前身份"
     },
     "agentim_program_skill": {
         "en": "Give this site skill to your Agent. It connects through its own program.",

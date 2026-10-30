@@ -9,6 +9,17 @@ import { describe, expect, it } from "vitest";
 import { parseConfig } from "./ModuleConfig";
 
 describe("AgentIM configuration", () => {
+    it("should choose an explicit login entry without changing service identity", () => {
+        for (const default_login of ["account", "agent"] as const) {
+            expect(parseConfig({ homeserver_url: "https://agents.example", default_login })).toEqual({
+                homeserverUrl: "https://agents.example",
+                defaultLogin: default_login,
+            });
+        }
+        for (const default_login of ["human-owner", "", null, true, 1]) {
+            expect(() => parseConfig({ homeserver_url: "https://agents.example", default_login })).toThrow();
+        }
+    });
     it("should pin a separate public site for native Desktop program access", () => {
         expect(parseConfig({ homeserver_url: "https://matrix.example", site_url: "https://agents.example" })).toEqual({
             homeserverUrl: "https://matrix.example",

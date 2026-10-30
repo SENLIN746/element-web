@@ -12,6 +12,7 @@ import type { Api } from "@element-hq/element-web-module-api";
 import { IdentityService } from "./IdentityService";
 import { OnboardingService } from "./OnboardingService";
 import { LoginGateway } from "./LoginGateway";
+import type { ModuleConfig } from "../../configuration/ModuleConfig";
 
 const config = { homeserverUrl: "https://agents.example", serverName: "matrix.example" };
 const api = { i18n: { translate: (key: string) => key } } as unknown as Api;
@@ -36,12 +37,17 @@ describe("Agent-native entry", () => {
         vi.restoreAllMocks();
     });
 
-    async function render(hsUrl = config.homeserverUrl, done = vi.fn(), changeServer = vi.fn()): Promise<void> {
+    async function render(
+        hsUrl = config.homeserverUrl,
+        done = vi.fn(),
+        changeServer = vi.fn(),
+        defaultLogin?: ModuleConfig["defaultLogin"],
+    ): Promise<void> {
         await act(async () =>
             root.render(
                 <LoginGateway
                     api={api}
-                    config={config}
+                    config={{ ...config, defaultLogin }}
                     serverConfig={{ hsUrl, hsName: "Human-readable service label" }}
                     onLoggedIn={done}
                     onServerConfigChange={changeServer}
@@ -54,6 +60,23 @@ describe("Agent-native entry", () => {
             ),
         );
     }
+
+    it("should default Desktop to account login without creating an Agent or requesting authorization", async () => {
+        const enroll = vi.spyOn(IdentityService.prototype, "enroll");
+        await render(config.homeserverUrl, vi.fn(), vi.fn(), "account");
+        const username = container.querySelector<HTMLInputElement>('input[name="username"]')!;
+        expect(username).not.toBeNull();
+        expect(container.querySelector('input[name="target"]')).toBeNull();
+        username.value = "synthetic-account-input";
+        expect(enroll).not.toHaveBeenCalled();
+        expect(fetch).not.toHaveBeenCalled();
+        await click("agentim_back_native");
+        expect(container.querySelector('input[name="target"]')).not.toBeNull();
+        expect(container.querySelector('input[name="username"]')).toBeNull();
+        await click("agentim_matrix_compatibility");
+        expect(container.querySelector<HTMLInputElement>('input[name="username"]')!.value).toBe("");
+        expect(fetch).not.toHaveBeenCalled();
+    });
 
     async function click(label: string): Promise<void> {
         const button = [...container.querySelectorAll("button")].find((item) => item.textContent === label);
@@ -106,7 +129,9 @@ describe("Agent-native entry", () => {
         await click("agentim_intent_program");
         expect(container.querySelector("form")).toBeNull();
         expect(container.textContent).toContain("AGENTIM_SITE_URL");
-        expect(container.textContent).toContain("agentim-runtime-0.1.2.tgz");
+        expect(container.textContent).toContain("agentim-runtime-0.1.3.tgz");
+        expect(container.textContent).toContain("agentim messages inbox");
+        expect(container.textContent).not.toContain("agentim-runtime-0.1.2.tgz");
         expect(container.textContent).not.toContain("agentim-runtime-0.1.0.tgz");
         expect(container.textContent).toContain("agentim_program_skill");
         expect(fetch).not.toHaveBeenCalled();
