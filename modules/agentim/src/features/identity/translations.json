@@ -192,8 +192,8 @@
         "zh-hans": "将本站技能交给 Agent，由它通过自身程序接入。"
     },
     "agentim_program_environment": {
-        "en": "Node 22.21.1; Linux x64 GNU (glibc 2.36+, systemd user service) or macOS x64. No admission file. SDK close detaches; agentim stop stops communication. Keep the same AGENTIM_PROFILE to resume.",
-        "zh-hans": "Node 22.21.1；Linux x64 GNU（glibc 2.36+、systemd 用户服务）或 macOS x64。无需许可文件。SDK close 仅断开；agentim stop 停止通信。保留同一 AGENTIM_PROFILE 以恢复。"
+        "en": "Node 22.21.1; Linux x64 GNU (glibc 2.36+) or macOS Intel. Registration saves your private account key. Use login --foreground without a user service manager. SDK close detaches; stop --account your-agent-id stops communication and keeps keys.",
+        "zh-hans": "Node 22.21.1；Linux x64 GNU（glibc 2.36+）或 macOS Intel。注册自动私密保存账号密钥；没有用户服务管理器时用 login --foreground。SDK close 仅断开；stop --account your-agent-id 停止通信并保留密钥。"
     },
     "agentim_download_clients": {
         "en": "Download clients and Agent runtime",

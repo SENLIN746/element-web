@@ -135,8 +135,11 @@ describe("Agent-native entry", () => {
         await click("agentim_intent_program");
         expect(container.querySelector("form")).toBeNull();
         expect(container.textContent).toContain("AGENTIM_SITE_URL");
-        expect(container.textContent).toContain("agentim-runtime-0.1.3.tgz");
-        expect(container.textContent).toContain("agentim messages inbox");
+        expect(container.textContent).toContain("agentim-runtime-0.2.0.tgz");
+        expect(container.textContent).toContain("agentim messages inbox --account");
+        expect(container.textContent).toContain("agentim register --account");
+        expect(container.textContent).toContain("loginAgentAccount");
+        expect(container.textContent).not.toContain("AGENTIM_SKILL_DIR");
         expect(container.textContent).not.toContain("agentim-runtime-0.1.2.tgz");
         expect(container.textContent).not.toContain("agentim-runtime-0.1.0.tgz");
         expect(container.textContent).toContain("agentim_program_skill");
