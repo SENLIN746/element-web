@@ -31,6 +31,9 @@ export class AgentIMApi implements IAgentIMApi {
             throw new Error("AgentIM request exceeds its byte budget");
         }
         const snapshot: unknown = serialized === undefined ? undefined : JSON.parse(serialized);
+        if (snapshot !== undefined && (snapshot === null || typeof snapshot !== "object" || Array.isArray(snapshot))) {
+            throw new Error("AgentIM request body must be a JSON object");
+        }
         const client = MatrixClientPeg.safeGet();
         requireAgentIMHomeserver(SdkConfig.get(), client.getHomeserverUrl());
         const assertActive = (): void => {

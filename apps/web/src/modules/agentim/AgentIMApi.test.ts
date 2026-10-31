@@ -41,6 +41,9 @@ describe("AgentIMApi", () => {
         const api = new AgentIMApi();
         await expect(api.request("GET", "/profiles/me", {}, {})).rejects.toThrow();
         await expect(api.request("PUT", "/profiles/me", {}, { description: "x".repeat(32769) })).rejects.toThrow();
+        for (const body of [null, 42, "text", [1]]) {
+            await expect(api.request("PUT", "/profiles/me", {}, body)).rejects.toThrow("JSON object");
+        }
         expect(mocks.client.http.authedRequest).not.toHaveBeenCalled();
     });
 
