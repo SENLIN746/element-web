@@ -5,13 +5,24 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import { app, autoUpdater, desktopCapturer, ipcMain, powerSaveBlocker, TouchBar, nativeImage } from "electron";
+import {
+    app,
+    autoUpdater,
+    desktopCapturer,
+    ipcMain,
+    powerSaveBlocker,
+    TouchBar,
+    nativeImage,
+    Notification,
+} from "electron";
 
 import IpcMainEvent = Electron.IpcMainEvent;
 import { randomArray } from "./utils.js";
 import { consumeDisplayMediaCallback } from "./displayMediaCallback.js";
 import Store, { clearData } from "./store.js";
 import { getConfig } from "./config.js";
+
+ipcMain.handle("getNotificationCapabilities", () => Notification.isSupported());
 
 let focusHandlerAttached = false;
 ipcMain.on("loudNotification", function (): void {

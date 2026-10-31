@@ -10,17 +10,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import {
-    type MatrixClient,
-    type Room,
-    type MatrixEvent,
-    type OAuthRegistrationRequest,
-} from "matrix-js-sdk/src/matrix";
+import { type MatrixClient, type OAuthRegistrationRequest } from "matrix-js-sdk/src/matrix";
 import React from "react";
 import { logger } from "matrix-js-sdk/src/logger";
 import { uniqueId } from "lodash";
 
-import BasePlatform, { UpdateCheckStatus, type UpdateStatus } from "../../BasePlatform";
+import { UpdateCheckStatus, type UpdateStatus } from "../../BasePlatform";
 import type BaseEventIndexManager from "../../indexing/BaseEventIndexManager";
 import dis from "../../dispatcher/dispatcher";
 import SdkConfig from "../../SdkConfig";
@@ -41,7 +36,7 @@ import { avatarUrlForRoom, getInitialLetter } from "../../Avatar";
 import DesktopCapturerSourcePicker from "../../components/views/elements/DesktopCapturerSourcePicker";
 import { MatrixClientPeg } from "../../MatrixClientPeg";
 import { SeshatIndexManager } from "./SeshatIndexManager";
-import { IPCManager } from "./IPCManager";
+import { ElectronNativePlatform } from "./ElectronNativePlatform";
 import { _t } from "../../languageHandler";
 import { BadgeOverlayRenderer } from "../../favicon";
 import { GenericToast } from "@element-hq/web-shared-components";
@@ -87,11 +82,9 @@ function getUpdateCheckStatus(status: boolean | string): UpdateStatus {
     }
 }
 
-export default class ElectronPlatform extends BasePlatform {
-    private readonly ipc = new IPCManager("ipcCall", "ipcReply");
+export default class ElectronPlatform extends ElectronNativePlatform {
     private readonly eventIndexManager: BaseEventIndexManager = new SeshatIndexManager();
     public readonly initialised: Promise<void>;
-    private readonly electron: Electron;
     private protocol!: string;
     private sessionId!: string;
     private badgeOverlayRenderer?: BadgeOverlayRenderer;
@@ -101,11 +94,6 @@ export default class ElectronPlatform extends BasePlatform {
 
     public constructor() {
         super();
-
-        if (!window.electron) {
-            throw new Error("Cannot instantiate ElectronPlatform, window.electron is not set");
-        }
-        this.electron = window.electron;
 
         /*
             IPC Call `check_updates` returns:
@@ -224,8 +212,9 @@ export default class ElectronPlatform extends BasePlatform {
     }
 
     private async initialise(): Promise<void> {
-        const { protocol, sessionId, config, supportedSettings, supportsBadgeOverlay } =
+        const { protocol, sessionId, config, supportedSettings, supportsBadgeOverlay, supportsNativeNotifications } =
             await this.electron.initialise();
+        this.setNativeNotificationSupport(supportsNativeNotifications);
         this.protocol = protocol;
         this.sessionId = sessionId;
         this.config = config;
@@ -272,13 +261,6 @@ export default class ElectronPlatform extends BasePlatform {
      * Return true if platform supports multi-language
      * spell-checking, otherwise false.
      */
-    public supportsSpellCheckSettings(): boolean {
-        return true;
-    }
-
-    public allowOverridingNativeContextMenus(): boolean {
-        return true;
-    }
 
     public setNotificationCount(count: number): void {
         if (this.notificationCount === count) return;
@@ -319,50 +301,6 @@ export default class ElectronPlatform extends BasePlatform {
                     logger.warn("Unable to generate badge overlay", ex);
                 });
         }
-    }
-
-    public supportsNotifications(): boolean {
-        return true;
-    }
-
-    public maySendNotifications(): boolean {
-        return true;
-    }
-
-    public displayNotification(
-        title: string,
-        msg: string,
-        avatarUrl: string,
-        room: Room,
-        ev?: MatrixEvent,
-    ): Notification {
-        // GNOME notification spec parses HTML tags for styling...
-        // Electron Docs state all supported linux notification systems follow this markup spec
-        // https://github.com/electron/electron/blob/master/docs/tutorial/desktop-environment-integration.md#linux
-        // maybe we should pass basic styling (italics, bold, underline) through from MD
-        // we only have to strip out < and > as the spec doesn't include anything about things like &amp;
-        // so we shouldn't assume that all implementations will treat those properly. Very basic tag parsing is done.
-        if (navigator.userAgent.includes("Linux")) {
-            msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        const notification = super.displayNotification(title, msg, avatarUrl, room, ev);
-
-        const handler = notification.onclick as () => void;
-        notification.onclick = (): void => {
-            handler?.();
-            void this.ipc.call("focusWindow");
-        };
-
-        return notification;
-    }
-
-    public loudNotification(ev: MatrixEvent, room: Room): void {
-        this.electron.send("loudNotification");
-    }
-
-    public needsUrlTooltips(): boolean {
-        return true;
     }
 
     public async getAppVersion(): Promise<string> {
@@ -409,59 +347,8 @@ export default class ElectronPlatform extends BasePlatform {
         });
     }
 
-    public requestNotificationPermission(): Promise<string> {
-        return Promise.resolve("granted");
-    }
-
-    public reload(): void {
-        window.location.reload();
-    }
-
     public getEventIndexingManager(): BaseEventIndexManager | null {
         return this.eventIndexManager;
-    }
-
-    public async setLanguage(preferredLangs: string[]): Promise<any> {
-        return this.ipc.call("setLanguage", preferredLangs);
-    }
-
-    public setSpellCheckEnabled(enabled: boolean): void {
-        this.ipc.call("setSpellCheckEnabled", enabled).catch((error) => {
-            logger.log("Failed to send setSpellCheckEnabled IPC to Electron");
-            logger.error(error);
-        });
-    }
-
-    public async getSpellCheckEnabled(): Promise<boolean> {
-        return this.ipc.call("getSpellCheckEnabled");
-    }
-
-    public setSpellCheckLanguages(preferredLangs: string[]): void {
-        this.ipc.call("setSpellCheckLanguages", preferredLangs).catch((error) => {
-            logger.log("Failed to send setSpellCheckLanguages IPC to Electron");
-            logger.error(error);
-        });
-    }
-
-    public async getSpellCheckLanguages(): Promise<string[]> {
-        return this.ipc.call("getSpellCheckLanguages");
-    }
-
-    public async getDesktopCapturerSources(options: GetSourcesOptions): Promise<Array<DesktopCapturerSource>> {
-        return this.ipc.call("getDesktopCapturerSources", options);
-    }
-
-    public supportsDesktopCapturer(): boolean {
-        return true;
-    }
-
-    public supportsJitsiScreensharing(): boolean {
-        // See https://github.com/element-hq/element-web/issues/4880
-        return false;
-    }
-
-    public async getAvailableSpellCheckLanguages(): Promise<string[]> {
-        return this.ipc.call("getAvailableSpellCheckLanguages");
     }
 
     public getSSOCallbackUrl(fragmentAfterLogin?: string): URL {
@@ -483,14 +370,6 @@ export default class ElectronPlatform extends BasePlatform {
             title: _t("auth|sso_complete_in_browser_dialog_title"),
             description: <Spinner />,
         });
-    }
-
-    public navigateForwardBack(back: boolean): void {
-        void this.ipc.call(back ? "navigateBack" : "navigateForward");
-    }
-
-    public overrideBrowserShortcuts(): boolean {
-        return true;
     }
 
     public async getPickleKey(userId: string, deviceId: string): Promise<string | null> {
