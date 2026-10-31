@@ -18,6 +18,8 @@ let buildConfig: BuildConfig;
 interface BuildConfig {
     // Application User Model ID
     appId: string;
+    // Opt in only for signed Squirrel-compatible release packaging.
+    nativeUpdates: boolean;
     // Protocol string used for OIDC callbacks
     protocol: string;
     // Subject name of the code signing cert used for Windows packages, if signed
@@ -29,6 +31,7 @@ export function getBuildConfig(): BuildConfig {
     if (!buildConfig) {
         const packageJson = loadJsonFile(path.join(__dirname, "..", "package.json")) as JsonObject;
         buildConfig = {
+            nativeUpdates: packageJson["electron_update_mode"] === "native",
             appId: (packageJson["electron_appId"] as string) || "im.riot.app",
             protocol: (packageJson["electron_protocol"] as string) || "io.element.desktop",
             windowsCertSubjectName: packageJson["electron_windows_cert_sn"] as string,

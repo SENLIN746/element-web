@@ -17,9 +17,25 @@ import { getBuildConfig } from "./build-config.js";
 import { ProductUpdater } from "./updates/controller.js";
 
 let productUpdater: ProductUpdater | undefined;
+let started = false;
 
 const UPDATE_POLL_INTERVAL_MS = 60 * 60 * 1000;
 const INITIAL_UPDATE_DELAY_MS = 30 * 1000;
+
+let scheduled = false;
+
+function scheduleUpdateChecks(): void {
+    if (scheduled) return;
+    scheduled = true;
+    const initial = setTimeout(() => void pollForUpdates(), INITIAL_UPDATE_DELAY_MS);
+    const recurring = setInterval(() => void pollForUpdates(), UPDATE_POLL_INTERVAL_MS);
+    initial.unref();
+    recurring.unref();
+    app.once("before-quit", () => {
+        clearTimeout(initial);
+        clearInterval(recurring);
+    });
+}
 
 function installUpdate(): void {
     if (productUpdater) {
@@ -91,9 +107,13 @@ async function pollForUpdates(): Promise<void> {
 }
 
 export async function start(updateBaseUrl: string): Promise<void> {
-    if (getBuildConfig().appId === "im.agentim.desktop") {
+    if (started) return;
+    started = true;
+    const build = getBuildConfig();
+    if (build.appId === "im.agentim.desktop" && !build.nativeUpdates) {
         productUpdater = new ProductUpdater(updateBaseUrl);
-        productUpdater.start();
+        if (!(await supportedMacOS())) return;
+        scheduleUpdateChecks();
         return;
     }
     if (!(await available())) return;
@@ -130,8 +150,7 @@ export async function start(updateBaseUrl: string): Promise<void> {
             // We also wait a short time before checking for updates the first time because
             // of squirrel on windows and it taking a small amount of time to release a
             // lock file.
-            setTimeout(pollForUpdates, INITIAL_UPDATE_DELAY_MS);
-            setInterval(pollForUpdates, UPDATE_POLL_INTERVAL_MS);
+            scheduleUpdateChecks();
         }
     } catch (err) {
         // will fail if running in debug mode
@@ -160,7 +179,10 @@ async function available(): Promise<boolean> {
         }
     }
 
-    // Otherwise we're either on macOS or Windows with Squirrel
+    return supportedMacOS();
+}
+
+async function supportedMacOS(): Promise<boolean> {
     if (process.platform === "darwin") {
         // OS release returns the Darwin kernel version, not the macOS version, see
         // https://en.wikipedia.org/wiki/Darwin_(operating_system)#Release_history to interpret it

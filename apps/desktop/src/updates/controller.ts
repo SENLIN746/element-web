@@ -16,22 +16,12 @@ export class ProductUpdater {
     private pending?: Promise<void>;
     private ready?: { file: string; update: DesktopUpdate };
     private readonly lifetime = new AbortController();
-    private timer?: ReturnType<typeof setInterval>;
 
     public constructor(base: string) {
         this.feed = updateFeed(base);
         app.once("before-quit", () => {
             this.lifetime.abort();
-            clearInterval(this.timer);
         });
-    }
-
-    public start(): void {
-        this.timer = setInterval(() => void this.check(), 60 * 60 * 1000);
-        this.timer.unref();
-        const initial = setTimeout(() => void this.check(), 30_000);
-        initial.unref();
-        this.lifetime.signal.addEventListener("abort", () => clearTimeout(initial), { once: true });
     }
 
     private status(value: boolean | string): void {
@@ -43,7 +33,7 @@ export class ProductUpdater {
         const { update } = this.ready;
         global.mainWindow?.webContents.send("update-downloaded", {
             releaseName: update.version,
-            releaseNotes: update.notes,
+            releaseNotes: `${update.notes}\nThis update opens the system installer; finish installation there.`,
             releaseDate: new Date(update.published_at),
             updateURL: update.url,
         });
@@ -138,7 +128,6 @@ export class ProductUpdater {
             });
             return;
         }
-        global.appQuitting = true;
-        app.quit();
+        // Opening a ZIP or package is not installation. Keep the current session running.
     }
 }
